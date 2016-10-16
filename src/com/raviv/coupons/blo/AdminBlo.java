@@ -5,6 +5,8 @@ import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
 import com.raviv.coupons.dao.CompanysDao;
 import com.raviv.coupons.dao.UsersDao;
+import com.raviv.coupons.dao.interfaces.ICompanysDao;
+import com.raviv.coupons.dao.interfaces.IUsersDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.enums.UserProfileType;
@@ -24,7 +26,7 @@ public class AdminBlo implements IClientBlo {
 	//private CouponsDao		couponsDao		=	null;
 	//private CustomersDao	customersDao	=	null;	
 	private UsersDao				usersDao;
-	
+
 	private User 					loggedUser;
 
 	public AdminBlo() throws ApplicationException
@@ -53,9 +55,39 @@ public class AdminBlo implements IClientBlo {
 		PrintUtils.printHeader("User logged in");		
 		System.out.println(loggedUser);
 
-		return null;
+		return this;
 	}
 
+
+	
+	@Override
+	public  IClientBlo login(User user) throws ApplicationException 
+	{
+				
+		if ( user == null )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null , "login with null user" );		
+		}
+		int userProfileId = user.getUserProfileId();
+
+		UserProfileType  adminUserProfileType = UserProfileType.ADMIN;
+		if      ( userProfileId != adminUserProfileType.getUserProfileId() )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
+					, "User profile ID must be ADMIN. input  userProfileId: " + userProfileId );		
+
+		}
+		
+		this.loggedUser = user;
+
+		PrintUtils.printHeader("User logged in");		
+		System.out.println(loggedUser);
+
+		return this;
+	}
+
+	
+	
 	private  void verifyLoggedUser() throws ApplicationException 
 	{
 		if ( this.loggedUser == null )
@@ -75,8 +107,8 @@ public class AdminBlo implements IClientBlo {
 		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
 
 		// Inject transaction manager to DAO via constructors
-		UsersDao 	usersDao 	= new UsersDao   ( jdbcTransactionManager );
-		CompanysDao companysDao	= new CompanysDao( jdbcTransactionManager );
+		IUsersDao 		usersDao 	= new UsersDao   ( jdbcTransactionManager );
+		ICompanysDao	companysDao	= new CompanysDao( jdbcTransactionManager );
 
 		try
 		{
@@ -150,7 +182,7 @@ public class AdminBlo implements IClientBlo {
 		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
 
 		// Inject transaction manager to DAO via constructors
-		CompanysDao companysDao	= new CompanysDao( jdbcTransactionManager );
+		ICompanysDao companysDao	= new CompanysDao( jdbcTransactionManager );
 
 		Company company;
 		

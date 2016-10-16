@@ -9,6 +9,9 @@ import com.raviv.coupons.tests.PrintUtils;
 public class JdbcTransactionManager  {
 	
 	private Connection 			connection;
+
+	ConnectionPoolManager connectionPoolManager;
+
 	
 	public Connection getConnection() throws ApplicationException {
 		
@@ -20,12 +23,14 @@ public class JdbcTransactionManager  {
 		return connection;
 	}
 
-	public JdbcTransactionManager() throws ApplicationException 
+	public JdbcTransactionManager() throws ApplicationException
 	{
 		try 
 		{
+			this.connectionPoolManager = ConnectionPoolManager.getInstance();
+			
 			// Getting a connection from the connections manager (getConnection is a static method)
-			this.connection = JdbcUtils.getConnection();
+			this.connection = connectionPoolManager.getConnection();
 			this.connection.setAutoCommit(false);    // commit will executed on demand
 		} 
 		catch (SQLException e) 
@@ -40,6 +45,7 @@ public class JdbcTransactionManager  {
 		try 
 		{
 			this.connection.commit();
+			this.connection.setAutoCommit(true);    // transaction is done - stop manage transactions for this connection
 			closeConnection();
 		} 
 		catch (SQLException e) 
@@ -56,6 +62,7 @@ public class JdbcTransactionManager  {
 		try 
 		{
 			this.connection.rollback();
+			this.connection.setAutoCommit(true);    // transaction is done - stop manage transactions for this connection
 			closeConnection();
 		} 
 		catch (SQLException e) 
@@ -67,8 +74,8 @@ public class JdbcTransactionManager  {
 
 	public void closeConnection()
 	{
-		// Close connection with JdbcUtils.closeResources
-		JdbcUtils.closeResources( this.connection );
+		// Return connection to connectionPoolManager
+		this.connectionPoolManager.returnConnection( this.connection );
 		connection = null;
 	}
 

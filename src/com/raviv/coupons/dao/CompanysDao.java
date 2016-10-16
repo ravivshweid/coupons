@@ -10,12 +10,11 @@ import java.sql.Timestamp;
 import com.raviv.coupons.beans.Company;
 import com.raviv.coupons.dao.interfaces.ICompanysDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
-import com.raviv.coupons.dao.utils.JdbcUtils;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 
 public class CompanysDao extends InfraDao implements ICompanysDao {
-	
+		
 	public CompanysDao() 
 	{
 		super();
@@ -87,11 +86,11 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{	
 				// We will close connection with Transaction manager
-				JdbcUtils.closeResources(preparedStatement, generatedKeys);
+				this.connectionPoolManager.closeResources(preparedStatement, generatedKeys);
 			}
 			else
 			{
-				JdbcUtils.closeResources(connection, preparedStatement, generatedKeys);
+				this.connectionPoolManager.closeResources(connection, preparedStatement, generatedKeys);
 			}
 		}
 	}
@@ -143,12 +142,12 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
 			}				
 		}
 		
@@ -202,12 +201,12 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement);
+				this.connectionPoolManager.closeResources(preparedStatement);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement);
+				this.connectionPoolManager.closeResources(connection, preparedStatement);
 			}		
 		}
 		

@@ -86,12 +86,12 @@ public class UsersDao extends InfraDao implements IUsersDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// We will close connection with transaction manager
-				JdbcUtils.closeResources(preparedStatement, generatedKeys);				
+				super.connectionPoolManager.closeResources(preparedStatement, generatedKeys);				
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement, generatedKeys);
+				super.connectionPoolManager.closeResources(connection, preparedStatement, generatedKeys);
 			}	
 		}
 		
@@ -137,12 +137,12 @@ public class UsersDao extends InfraDao implements IUsersDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
 			}	
 		}
 		
@@ -198,12 +198,12 @@ public class UsersDao extends InfraDao implements IUsersDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement);
+				super.connectionPoolManager.closeResources(preparedStatement);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement);
+				super.connectionPoolManager.closeResources(connection, preparedStatement);
 			}	
 		}
 		
@@ -255,12 +255,12 @@ public class UsersDao extends InfraDao implements IUsersDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
 			}	
 		}
 		
@@ -306,7 +306,7 @@ public class UsersDao extends InfraDao implements IUsersDao {
 		} 
 		finally 
 		{
-			JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+			super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
 		}
 		
 		return returnObj;

@@ -7,14 +7,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.raviv.coupons.dao.utils.ConnectionPoolManager;
-import com.raviv.coupons.dao.utils.JdbcUtils;
 
 public class TestConnectionPoolManager 
 {
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+	public static void main(String[] args) throws Exception {
 		
-		Connection con1 = JdbcUtils.getConnection();
+		
+		ConnectionPoolManager connectionPoolManager = ConnectionPoolManager.getInstance();
+		
+		Connection con1 = connectionPoolManager.getConnection();
 		String tableName;
 		
 		//tableName = "COMPANYS";
@@ -39,7 +41,7 @@ public class TestConnectionPoolManager
 		printTableUpdateStatment( tableName, 25, con1);
 		
 		
-		ConnectionPoolManager.returnConnection(con1);
+		connectionPoolManager.returnConnection(con1);
 
 		//printTable ( tableName, 25, con1);
 		
@@ -64,7 +66,7 @@ public class TestConnectionPoolManager
 		printTable ("COUPON", 24, con4);
 		*/
 		
-		ConnectionPoolManager.closeAllConnections();
+		connectionPoolManager.closeAllConnections();
 	}
 
 	@SuppressWarnings("unused")

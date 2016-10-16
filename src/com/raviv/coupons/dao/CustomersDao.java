@@ -10,7 +10,6 @@ import java.sql.Statement;
 import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.dao.interfaces.ICustomersDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
-import com.raviv.coupons.dao.utils.JdbcUtils;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 
@@ -80,12 +79,12 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement, generatedKeys);
+				super.connectionPoolManager.closeResources(preparedStatement, generatedKeys);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement, generatedKeys);
+				super.connectionPoolManager.closeResources(connection, preparedStatement, generatedKeys);
 			}	
 		}
 		
@@ -136,12 +135,12 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement, resultSet);
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
 			}	
 		}
 		
@@ -193,12 +192,12 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
-				JdbcUtils.closeResources(preparedStatement);
+				super.connectionPoolManager.closeResources(preparedStatement);
 			}
 			else
 			{
 				// We do not have transaction manager.
-				JdbcUtils.closeResources(connection, preparedStatement);
+				super.connectionPoolManager.closeResources(connection, preparedStatement);
 			}
 		}
 	}// updateCustomer

@@ -87,36 +87,36 @@ public class JdbcUtils {
 	}
 
 	
-	
-	public static void closeResources(Connection connection)
+	/*
+	private static void closeResources(Connection connection)
 	{
 		closeConnection(connection);
 	}
 
-	public static void closeResources(PreparedStatement preparedStatement) 
+	private static void closeResources(PreparedStatement preparedStatement) 
 	{
 		closePreparedStatement	( preparedStatement );	
 	}
 
 	
-	public static void closeResources(Connection connection, PreparedStatement preparedStatement)
+	private static void closeResources(Connection connection, PreparedStatement preparedStatement)
 	{	
 		closeConnection         ( connection        );
 		closePreparedStatement	( preparedStatement );	
 	}
 
-	public static void closeResources(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) 
+	private static void closeResources(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) 
 	{
 		closeConnection         ( connection        );
 		closePreparedStatement	( preparedStatement );	
 		closeResultSet			( resultSet			);	
 	}
 
-	public static void closeResources(PreparedStatement preparedStatement, ResultSet resultSet) 
+	private static void closeResources(PreparedStatement preparedStatement, ResultSet resultSet) 
 	{
 		closePreparedStatement	( preparedStatement );	
 		closeResultSet			( resultSet			);	
 	}
-
+*/
 }
 

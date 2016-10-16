@@ -14,12 +14,12 @@ public class AdminBlo010CreateCompanyTest {
 
 		User user = new User();		
 		user.setUserName( "Raviv Shweid" );
-		user.setLoginName( "raviv5" );
+		user.setLoginName( "raviv7" );
 		user.setLoginPassword( "unix11" );
 		//System.out.println(user);
 
 		Company company = new Company();
-		company.setCompanyName("Company test 4");
+		company.setCompanyName("Company test 6");
 		company.setCompanyEmail("raviv.shweid@gmail.com");
 		//System.out.println(company);
 		
