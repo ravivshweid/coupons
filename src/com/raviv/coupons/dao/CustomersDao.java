@@ -71,7 +71,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		} 
 		catch (SQLException e) 
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create customer due to :" + e.getMessage() );
 		} 
 		finally 

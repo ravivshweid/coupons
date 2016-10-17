@@ -3,11 +3,14 @@ package com.raviv.coupons.blo;
 import java.util.List;
 
 import com.raviv.coupons.beans.Company;
+import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
 import com.raviv.coupons.dao.CompanysDao;
+import com.raviv.coupons.dao.CustomersDao;
 import com.raviv.coupons.dao.UsersDao;
 import com.raviv.coupons.dao.interfaces.ICompanysDao;
+import com.raviv.coupons.dao.interfaces.ICustomersDao;
 import com.raviv.coupons.dao.interfaces.IUsersDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
 import com.raviv.coupons.enums.ErrorType;
@@ -259,5 +262,77 @@ public class AdminBlo implements IClientBlo {
 		
 		return company;
 	}
+
+	public  void 			createCustomer(User user, Customer customer) throws ApplicationException 
+	{
+		
+		verifyLoggedUser();
+
+		// =====================================================
+		// Start transaction by creating JdbcTransactionManager
+		// =====================================================		
+		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
+
+		// Inject transaction manager to DAO via constructors
+		IUsersDao 		usersDao 		= new UsersDao   	( jdbcTransactionManager );
+		ICustomersDao	customersDao	= new CustomersDao	( jdbcTransactionManager );
+
+		try
+		{
+			// =====================================================
+			// Create new user for the new customer
+			// =====================================================
+			
+			// Prepare inputs
+			user.setCreatedByUserId( this.loggedUser.getUserId() );
+			user.setUpdatedByUserId( this.loggedUser.getUserId() );
+			UserProfileType customerUserProfileType = UserProfileType.CUSTOMER;
+			user.setUserProfileId( customerUserProfileType.getUserProfileId() );
+			
+			// Create the user
+			usersDao.createUser(user);
+		
+			// =====================================================
+			// Create new customer with the new user
+			// =====================================================
+			
+			// Prepare inputs
+			int newUserId = user.getUserId();
+			customer.setUserId(newUserId);
+			customer.setCreatedByUserId( this.loggedUser.getUserId() );
+			customer.setUpdatedByUserId( this.loggedUser.getUserId() );
 	
+			// Create the customer
+			customersDao.createCustomer(customer);
+			
+
+			// =====================================================
+			// Commit transaction
+			// =====================================================
+
+			jdbcTransactionManager.commit();
+			
+			PrintUtils.printHeader("createCustomer created customer");
+			System.out.println(user);
+			System.out.println(customer);
+			
+		}
+		catch (ApplicationException e)
+		{
+			// =====================================================
+			// Rollback transaction
+			// =====================================================
+
+			jdbcTransactionManager.rollback();
+			
+			throw (e); 
+			
+		}
+		finally
+		{
+			jdbcTransactionManager.closeConnection();
+		}	
+	}// createCustomer
+
+
 }
