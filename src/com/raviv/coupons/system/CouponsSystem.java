@@ -7,7 +7,7 @@ import com.raviv.coupons.dao.UsersDao;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.enums.UserProfileType;
 import com.raviv.coupons.exceptions.ApplicationException;
-import com.raviv.coupons.tests.PrintUtils;
+import com.raviv.coupons.utils.PrintUtils;
 
 public class CouponsSystem 
 {
@@ -51,7 +51,7 @@ public class CouponsSystem
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
 					, "User not found. loginName : " + loginName + ",  loginPassword : " + loginPassword  );
 		}
-		PrintUtils.printHeader("User logged in");		
+		PrintUtils.printHeader("CouponsSystem : User logged in");		
 		System.out.println(loggedUser);
 
 		

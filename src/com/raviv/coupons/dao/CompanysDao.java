@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.raviv.coupons.beans.Company;
 import com.raviv.coupons.dao.interfaces.ICompanysDao;
@@ -25,7 +27,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 	}
 
 	@Override
-	public void createCompany(Company company) throws ApplicationException {
+	public void 			createCompany(Company company) throws ApplicationException {
 		
 		PreparedStatement 	preparedStatement	= null;
 		Connection 			connection 			= null;
@@ -96,7 +98,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 	}
 	
 	@Override
-	public Company getCompany(long companyId) throws ApplicationException {
+	public Company 			getCompany(long companyId) throws ApplicationException {
 		Connection 			connection 			= null;
 		PreparedStatement 	preparedStatement 	= null;		
 		ResultSet 			resultSet 			= null;
@@ -119,17 +121,9 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 	
 			// Not found ...
 			if ( !resultSet.next() ) { return null; } 
-			
-			
-			//extract bean from result Set			
-			returnObj.setCompanyId      	( resultSet.getLong      ( "COMPANY_ID" ) );
-			returnObj.setSysCreationDate	( resultSet.getTimestamp ( "SYS_CREATION_DATE" ).getTime() );
-			returnObj.setSysUpdateDate  	( resultSet.getTimestamp ( "SYS_UPDATE_DATE" ).getTime() );
-			returnObj.setCreatedByUserId	( resultSet.getInt       ( "CREATED_BY_USER_ID" ) );
-			returnObj.setUpdatedByUserId	( resultSet.getInt       ( "UPDATED_BY_USER_ID" ) );
-			returnObj.setUserId         	( resultSet.getInt       ( "USER_ID" ) );
-			returnObj.setCompanyName    	( resultSet.getString    ( "COMPANY_NAME" ) );
-			returnObj.setCompanyEmail   	( resultSet.getString    ( "COMPANY_EMAIL" ) );
+						
+			//extract bean from result Set
+			this.copyDataFromResultSetToBean (returnObj, resultSet);
 			
 		} 
 		catch (SQLException e) 
@@ -154,8 +148,63 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		return returnObj;
 	}
 
+	public List<Company> 	getAllCompanys() throws ApplicationException {
+		Connection 			connection 			= null;
+		PreparedStatement 	preparedStatement 	= null;		
+		ResultSet 			resultSet 			= null;
+		List<Company>		allCompanys			= new ArrayList<Company>();
+		Company 			company;
+
+	// getting the specific entry by the input id
+	// storing it into resultSet
+		try 
+		{
+			// Getting a connection from the connections manager or Transaction manager
+			connection = super.getConnection();
+			
+			String sql = "SELECT * FROM COMPANYS";
+			
+			preparedStatement = connection.prepareStatement(sql);
+			
+			// execute query
+			resultSet = preparedStatement.executeQuery();
+	
+			// Loop through result set
+			// For each company create bean and add it to output list
+			while ( resultSet.next() ) 
+			{
+				company = new Company();
+				//extract bean from result Set
+				this.copyDataFromResultSetToBean (company, resultSet);
+				allCompanys.add(company);
+			} 
+						
+			
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get all companys" + e.getMessage());
+		} 
+		finally 
+		{
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
+			}				
+		}
+		
+		return allCompanys;
+	}
+
 	@Override
-	public void updateCompany(Company company) throws ApplicationException {
+	public void 			updateCompany(Company company) throws ApplicationException {
 		PreparedStatement 	preparedStatement	= null;
 		Connection 			connection 			= null;
 
@@ -213,9 +262,21 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 	}
 
 	@Override
-	public void deleteCompany(long companyId) {
+	public void 			deleteCompany(long companyId) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	private void 			copyDataFromResultSetToBean (Company company, ResultSet resultSet) throws SQLException
+	{
+		company.setCompanyId      	( resultSet.getLong      ( "COMPANY_ID" ) );
+		company.setSysCreationDate	( resultSet.getTimestamp ( "SYS_CREATION_DATE" ).getTime() );
+		company.setSysUpdateDate  	( resultSet.getTimestamp ( "SYS_UPDATE_DATE" ).getTime() );
+		company.setCreatedByUserId	( resultSet.getInt       ( "CREATED_BY_USER_ID" ) );
+		company.setUpdatedByUserId	( resultSet.getInt       ( "UPDATED_BY_USER_ID" ) );
+		company.setUserId         	( resultSet.getInt       ( "USER_ID" ) );
+		company.setCompanyName    	( resultSet.getString    ( "COMPANY_NAME" ) );
+		company.setCompanyEmail   	( resultSet.getString    ( "COMPANY_EMAIL" ) );
 	}
 
 }

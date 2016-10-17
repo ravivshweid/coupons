@@ -1,5 +1,7 @@
 package com.raviv.coupons.blo;
 
+import java.util.List;
+
 import com.raviv.coupons.beans.Company;
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
@@ -11,7 +13,7 @@ import com.raviv.coupons.dao.utils.JdbcTransactionManager;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.enums.UserProfileType;
 import com.raviv.coupons.exceptions.ApplicationException;
-import com.raviv.coupons.tests.PrintUtils;
+import com.raviv.coupons.utils.PrintUtils;
 
 /**
  * 
@@ -22,7 +24,7 @@ import com.raviv.coupons.tests.PrintUtils;
  */
 public class AdminBlo implements IClientBlo {
 
-	//private	CompanysDao				companysDao;
+	private	CompanysDao			companysDao;
 	//private CouponsDao		couponsDao		=	null;
 	//private CustomersDao	customersDao	=	null;	
 	private UsersDao				usersDao;
@@ -31,12 +33,11 @@ public class AdminBlo implements IClientBlo {
 
 	public AdminBlo() throws ApplicationException
 	{
-		//this.companysDao 			= new CompanysDao();
+		this.companysDao 			= new CompanysDao();
 		//this.couponsDao			= new CouponsDao();
 		//this.customersDao			= new CustomersDao();
 		this.usersDao 				= new UsersDao();
 	}
-	
 	
 	@Override
 	public  IClientBlo login(String loginName, String loginPassword) throws ApplicationException 
@@ -52,13 +53,11 @@ public class AdminBlo implements IClientBlo {
 					, "Failed to get user with loginName : " + loginName + ",  loginPassword : " + loginPassword + ", and UserProfileType.ADMIN." );
 		}
 
-		PrintUtils.printHeader("User logged in");		
+		PrintUtils.printHeader("AdminBlo: User logged in");		
 		System.out.println(loggedUser);
 
 		return this;
 	}
-
-
 	
 	@Override
 	public  IClientBlo login(User user) throws ApplicationException 
@@ -80,14 +79,12 @@ public class AdminBlo implements IClientBlo {
 		
 		this.loggedUser = user;
 
-		PrintUtils.printHeader("User logged in");		
+		PrintUtils.printHeader("AdminBlo: User logged in");		
 		System.out.println(loggedUser);
 
 		return this;
 	}
 
-	
-	
 	private  void verifyLoggedUser() throws ApplicationException 
 	{
 		if ( this.loggedUser == null )
@@ -229,6 +226,21 @@ public class AdminBlo implements IClientBlo {
 		{
 			jdbcTransactionManager.closeConnection();
 		}	
+	}
+
+	public  List<Company> getAllCompanys() throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		List<Company> companysList;
+		companysList = companysDao.getAllCompanys();
+		
+		for ( Company company : companysList )
+		{
+			System.out.println(company);
+		}
+		
+		return companysList;
 	}
 
 	

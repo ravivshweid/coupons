@@ -1,4 +1,4 @@
-package com.raviv.coupons.tests;
+package com.raviv.coupons.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

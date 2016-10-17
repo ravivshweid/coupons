@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
-import com.raviv.coupons.tests.PrintUtils;
+import com.raviv.coupons.utils.PrintUtils;
 
 public class JdbcTransactionManager  {
 	
