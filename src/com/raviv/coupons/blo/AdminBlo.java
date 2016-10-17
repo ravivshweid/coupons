@@ -40,7 +40,7 @@ public class AdminBlo implements IClientBlo {
 	}
 	
 	@Override
-	public  IClientBlo login(String loginName, String loginPassword) throws ApplicationException 
+	public  IClientBlo 		login(String loginName, String loginPassword) throws ApplicationException 
 	{
 				
 		UserProfileType  adminUserProfileType = UserProfileType.ADMIN;
@@ -60,7 +60,7 @@ public class AdminBlo implements IClientBlo {
 	}
 	
 	@Override
-	public  IClientBlo login(User user) throws ApplicationException 
+	public  IClientBlo 		login(User user) throws ApplicationException 
 	{
 				
 		if ( user == null )
@@ -85,7 +85,7 @@ public class AdminBlo implements IClientBlo {
 		return this;
 	}
 
-	private  void verifyLoggedUser() throws ApplicationException 
+	private  void 			verifyLoggedUser() throws ApplicationException 
 	{
 		if ( this.loggedUser == null )
 		{
@@ -93,7 +93,7 @@ public class AdminBlo implements IClientBlo {
 		}		
 	}
 	
-	public  void createCompany(User user, Company company) throws ApplicationException 
+	public  void 			createCompany(User user, Company company) throws ApplicationException 
 	{
 		
 		verifyLoggedUser();
@@ -166,7 +166,7 @@ public class AdminBlo implements IClientBlo {
 		}	
 	}
 
-	public  void updateCompany(Company inputCompany) throws ApplicationException 
+	public  void 			updateCompany(Company inputCompany) throws ApplicationException 
 	{
 		
 		verifyLoggedUser();
@@ -228,7 +228,7 @@ public class AdminBlo implements IClientBlo {
 		}	
 	}
 
-	public  List<Company> getAllCompanys() throws ApplicationException 
+	public  List<Company>	getAllCompanys() throws ApplicationException 
 	{		
 		verifyLoggedUser();
 		
@@ -243,5 +243,21 @@ public class AdminBlo implements IClientBlo {
 		return companysList;
 	}
 
+	public  Company 		getCompany(long companyId) throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		Company company;
+		company = companysDao.getCompany(companyId);
+		
+		if ( company == null )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null, "Company not found, companyId : " + companyId );			
+		}
+		
+		System.out.println(company);
+		
+		return company;
+	}
 	
 }
