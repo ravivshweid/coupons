@@ -17,7 +17,6 @@ public class SystemAdminBlo060createCustomer {
 		
 		adminBlo = (AdminBlo) couponsSystem.login("admin", "1234");
 		
-		
 		//System.out.println(adminBlo);
 		User user = new User();		
 		user.setUserName( "Raviv Shweid" );
@@ -32,7 +31,6 @@ public class SystemAdminBlo060createCustomer {
 		adminBlo.createCustomer(user, customer);
 		//System.out.println(user);
 		//System.out.println(company);
-		
 
 	}
 

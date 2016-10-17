@@ -1,12 +1,13 @@
 package com.raviv.coupons.dao;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.dao.interfaces.ICustomersDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
@@ -25,7 +26,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 	}
 
 	@Override
-	public void createCustomer(Customer customer) throws ApplicationException {
+	public void 			createCustomer(Customer customer) throws ApplicationException {
 	
 		PreparedStatement 	preparedStatement	= null;
 		Connection 			connection 			= null;
@@ -91,7 +92,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 	}
 	
 	@Override
-	public Customer getCustomer(long customerId) throws ApplicationException 
+	public Customer			getCustomer(long customerId) throws ApplicationException 
 	{
 		Connection 			connection 			= null;
 		PreparedStatement 	preparedStatement 	= null;		
@@ -117,13 +118,8 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 			if ( !resultSet.next() ) { return null; } 
 			
 			//extract bean from result Set
-			returnObj.setCustomerId     	( resultSet.getLong      ( "CUSTOMER_ID" ) );
-			returnObj.setSysCreationDate	( resultSet.getTimestamp ( "SYS_CREATION_DATE" ).getTime() );
-			returnObj.setSysUpdateDate  	( resultSet.getTimestamp ( "SYS_UPDATE_DATE" ).getTime() );
-			returnObj.setCreatedByUserId	( resultSet.getInt       ( "CREATED_BY_USER_ID" ) );
-			returnObj.setUpdatedByUserId	( resultSet.getInt       ( "UPDATED_BY_USER_ID" ) );
-			returnObj.setUserId         	( resultSet.getInt       ( "USER_ID" ) );
-			returnObj.setCustomerName   	( resultSet.getString    ( "CUSTOMER_NAME" ) );			
+			this.copyDataFromResultSetToBean (returnObj, resultSet);
+
 		} 
 		catch (SQLException e) 
 		{
@@ -148,7 +144,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 }
 
 	@Override
-	public void updateCustomer(Customer customer) throws ApplicationException 
+	public void 			updateCustomer(Customer customer) throws ApplicationException 
 	{	
 		PreparedStatement 	preparedStatement	= null;
 		Connection 			connection 			= null;
@@ -203,9 +199,76 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 	}// updateCustomer
 	
 	@Override
-	public void deleteCustomer(long customerId) {
+	public void 			deleteCustomer(long customerId) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	public List<Customer> 	getAllCustomers() throws ApplicationException {
+		Connection 			connection 			= null;
+		PreparedStatement 	preparedStatement 	= null;		
+		ResultSet 			resultSet 			= null;
+		List<Customer>		allCustomers			= new ArrayList<Customer>();
+		Customer 			customer;
+
+	// getting the specific entry by the input id
+	// storing it into resultSet
+		try 
+		{
+			// Getting a connection from the connections manager or Transaction manager
+			connection = super.getConnection();
+			
+			String sql = "SELECT * FROM CUSTOMERS";
+			
+			preparedStatement = connection.prepareStatement(sql);
+			
+			// execute query
+			resultSet = preparedStatement.executeQuery();
+	
+			// Loop through result set
+			// For each company create bean and add it to output list
+			while ( resultSet.next() ) 
+			{
+				customer = new Customer();
+				//extract bean from result Set
+				this.copyDataFromResultSetToBean (customer, resultSet);
+				allCustomers.add(customer);
+			} 
+						
+			
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get all customers" + e.getMessage());
+		} 
+		finally 
+		{
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
+			}				
+		}
+		
+		return allCustomers;
+	}
+	
+	private void 			copyDataFromResultSetToBean (Customer customer, ResultSet resultSet) throws SQLException
+	{
+		customer.setCustomerId     	( resultSet.getLong      ( "CUSTOMER_ID" ) );
+		customer.setSysCreationDate	( resultSet.getTimestamp ( "SYS_CREATION_DATE" ).getTime() );
+		customer.setSysUpdateDate  	( resultSet.getTimestamp ( "SYS_UPDATE_DATE" ).getTime() );
+		customer.setCreatedByUserId	( resultSet.getInt       ( "CREATED_BY_USER_ID" ) );
+		customer.setUpdatedByUserId	( resultSet.getInt       ( "UPDATED_BY_USER_ID" ) );
+		customer.setUserId         	( resultSet.getInt       ( "USER_ID" ) );
+		customer.setCustomerName   	( resultSet.getString    ( "CUSTOMER_NAME" ) );			
+	}
+
+	
 }

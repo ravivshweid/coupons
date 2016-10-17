@@ -27,9 +27,9 @@ import com.raviv.coupons.utils.PrintUtils;
  */
 public class AdminBlo implements IClientBlo {
 
-	private	CompanysDao			companysDao;
+	private	CompanysDao				companysDao;
 	//private CouponsDao		couponsDao		=	null;
-	//private CustomersDao	customersDao	=	null;	
+	private CustomersDao			customersDao;	
 	private UsersDao				usersDao;
 
 	private User 					loggedUser;
@@ -38,7 +38,7 @@ public class AdminBlo implements IClientBlo {
 	{
 		this.companysDao 			= new CompanysDao();
 		//this.couponsDao			= new CouponsDao();
-		//this.customersDao			= new CustomersDao();
+		this.customersDao			= new CustomersDao();
 		this.usersDao 				= new UsersDao();
 	}
 	
@@ -70,15 +70,8 @@ public class AdminBlo implements IClientBlo {
 		{
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null , "login with null user" );		
 		}
-		int userProfileId = user.getUserProfileId();
-
-		UserProfileType  adminUserProfileType = UserProfileType.ADMIN;
-		if      ( userProfileId != adminUserProfileType.getUserProfileId() )
-		{
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "User profile ID must be ADMIN. input  userProfileId: " + userProfileId );		
-
-		}
+		
+		verifyAdminUserProfileId (user);
 		
 		this.loggedUser = user;
 
@@ -88,12 +81,27 @@ public class AdminBlo implements IClientBlo {
 		return this;
 	}
 
+	public  void 			verifyAdminUserProfileId(User user) throws ApplicationException 
+	{
+		int userProfileId = user.getUserProfileId();
+
+		UserProfileType  adminUserProfileType = UserProfileType.ADMIN;
+		if      ( userProfileId != adminUserProfileType.getUserProfileId() )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
+					, "User profile ID must be ADMIN. input  userProfileId: " + userProfileId );		
+
+		}		
+	}
+
 	private  void 			verifyLoggedUser() throws ApplicationException 
 	{
 		if ( this.loggedUser == null )
 		{
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null, "User is not logged in." );			
 		}		
+		
+		verifyAdminUserProfileId (this.loggedUser);
 	}
 	
 	public  void 			createCompany(User user, Company company) throws ApplicationException 
@@ -333,6 +341,38 @@ public class AdminBlo implements IClientBlo {
 			jdbcTransactionManager.closeConnection();
 		}	
 	}// createCustomer
+
+	public  List<Customer>	getAllCustomers() throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		List<Customer> customersList;
+		customersList = customersDao.getAllCustomers();
+		
+		for ( Customer customer : customersList )
+		{
+			System.out.println(customer);
+		}
+		
+		return customersList;
+	}
+
+	public  Customer 		getCustomer(long customerId) throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		Customer customer;
+		customer = customersDao.getCustomer(customerId);
+		
+		if ( customer == null )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null, "Customer not found, customerId : " + customerId );			
+		}
+		
+		System.out.println(customer);
+		
+		return customer;
+	}
 
 
 }
