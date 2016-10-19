@@ -59,9 +59,6 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 			preparedStatement.setString	(4 ,	company.getCompanyName() );
 			preparedStatement.setString	(5 ,	company.getCompanyEmail() );
 			
-			//preparedStatement.setString(2, coupon.getCouponType().getName());
-
-
 			// executeUpdate is a method used in order to : insert, delete, update (not get)
 			preparedStatement.executeUpdate();
 
@@ -74,7 +71,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 	        }
 	        else 
 	        {
-	            throw new SQLException("Creating coupon failed, no ID obtained.");
+	            throw new SQLException("Creating company failed, no ID obtained.");
 	        }
 	        
 		} 
@@ -129,7 +126,57 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get coupon with id : " + companyId + " " + e.getMessage());
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get company with id : " + companyId + " " + e.getMessage());
+		} 
+		finally 
+		{
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
+			}				
+		}
+		
+		return returnObj;
+	}
+
+	public Company 			getCompanyByUserId(long userId) throws ApplicationException {
+		Connection 			connection 			= null;
+		PreparedStatement 	preparedStatement 	= null;		
+		ResultSet 			resultSet 			= null;
+		Company 			returnObj 			= new Company();
+
+	// getting the specific entry by the input id
+	// storing it into resultSet
+		try 
+		{
+			// Getting a connection from the connections manager or Transaction manager
+			connection = super.getConnection();
+			
+			String sql = "SELECT * FROM COMPANYS WHERE USER_ID = ?";
+			
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setLong(1, userId);
+			
+			// execute query
+			resultSet = preparedStatement.executeQuery();
+	
+			// Not found ...
+			if ( !resultSet.next() ) { return null; } 
+						
+			//extract bean from result Set
+			this.copyDataFromResultSetToBean (returnObj, resultSet);
+			
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get company with userId : " + userId + " " + e.getMessage());
 		} 
 		finally 
 		{
@@ -279,4 +326,5 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		company.setCompanyEmail   	( resultSet.getString    ( "COMPANY_EMAIL" ) );
 	}
 
+	
 }

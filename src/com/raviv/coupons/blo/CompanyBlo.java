@@ -3,6 +3,7 @@ package com.raviv.coupons.blo;
 import java.util.List;
 
 import com.raviv.coupons.beans.Company;
+import com.raviv.coupons.beans.Coupon;
 import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
@@ -25,16 +26,18 @@ import com.raviv.coupons.utils.PrintUtils;
  * @author raviv
  *
  */
-public class AdminBlo implements IClientBlo {
+public class CompanyBlo implements IClientBlo {
 
+	
 	private	CompanysDao				companysDao;
-	//private CouponsDao		couponsDao		=	null;
+	//private CouponsDao			couponsDao;
 	private CustomersDao			customersDao;	
 	private UsersDao				usersDao;
 
 	private User 					loggedUser;
+	private Company					company;
 
-	public AdminBlo() throws ApplicationException
+	public CompanyBlo() throws ApplicationException
 	{
 		this.companysDao 			= new CompanysDao();
 		//this.couponsDao			= new CouponsDao();
@@ -45,19 +48,31 @@ public class AdminBlo implements IClientBlo {
 	@Override
 	public  IClientBlo 		login(String loginName, String loginPassword) throws ApplicationException 
 	{
-				
-		UserProfileType  adminUserProfileType = UserProfileType.ADMIN;
-		
-		this.loggedUser = this.usersDao.getUserByLoginNameLoginPasswordUserProfileId( loginName, loginPassword, adminUserProfileType.getUserProfileId() );
-
+		//==============================================
+		// Get user details
+		//==============================================
+		UserProfileType  companyUserProfileType = UserProfileType.COMPANY;		
+		this.loggedUser = this.usersDao.getUserByLoginNameLoginPasswordUserProfileId( loginName, loginPassword, companyUserProfileType.getUserProfileId() );
 		if ( this.loggedUser == null )
 		{
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
 					, "Failed to get user with loginName : " + loginName + ",  loginPassword : " + loginPassword + ", and UserProfileType.ADMIN." );
 		}
-
-		PrintUtils.printHeader("AdminBlo: User logged in");		
+		PrintUtils.printHeader("CompanyBlo: User logged in");		
 		System.out.println(loggedUser);
+
+		//==============================================
+		// Get company details with the user id
+		//==============================================		
+		int userId   = this.loggedUser.getUserId();
+		this.company = this.companysDao.getCompanyByUserId(userId);
+		if ( this.company == null )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
+					, "Failed to get company with userId : " + userId );
+		}
+		PrintUtils.printHeader("CompanyBlo: Company logged in");		
+		System.out.println(company);
 
 		return this;
 	}
@@ -75,8 +90,22 @@ public class AdminBlo implements IClientBlo {
 		
 		this.loggedUser = user;
 
-		PrintUtils.printHeader("AdminBlo: User logged in");		
+		PrintUtils.printHeader("CompanyBlo: User logged in");		
 		System.out.println(loggedUser);
+		
+		//==============================================
+		// Get company details with the user id
+		//==============================================		
+		int userId   = this.loggedUser.getUserId();
+		this.company = this.companysDao.getCompanyByUserId(userId);
+		if ( this.company == null )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
+					, "Failed to get company with userId : " + userId );
+		}
+		PrintUtils.printHeader("CompanyBlo: Company logged in");		
+		System.out.println(company);
+
 
 		return this;
 	}
@@ -85,11 +114,11 @@ public class AdminBlo implements IClientBlo {
 	{
 		int userProfileId = user.getUserProfileId();
 
-		UserProfileType  adminUserProfileType = UserProfileType.ADMIN;
-		if      ( userProfileId != adminUserProfileType.getUserProfileId() )
+		UserProfileType  companyUserProfileType = UserProfileType.COMPANY;
+		if      ( userProfileId != companyUserProfileType.getUserProfileId() )
 		{
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "User profile ID must be ADMIN. input userProfileId: " + userProfileId );		
+					, "User profile ID must be COMPANY. input  userProfileId: " + userProfileId );		
 
 		}		
 	}
@@ -104,7 +133,7 @@ public class AdminBlo implements IClientBlo {
 		verifyUserProfileId (this.loggedUser);
 	}
 	
-	public  void 			createCompany(User user, Company company) throws ApplicationException 
+	public  void 			createCoupon( Coupon coupon ) throws ApplicationException 
 	{
 		
 		verifyLoggedUser();
@@ -115,35 +144,16 @@ public class AdminBlo implements IClientBlo {
 		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
 
 		// Inject transaction manager to DAO via constructors
-		IUsersDao 		usersDao 	= new UsersDao   ( jdbcTransactionManager );
-		ICompanysDao	companysDao	= new CompanysDao( jdbcTransactionManager );
+		//ICouponsDao		couponsDao	= new CouponsDao ( jdbcTransactionManager );
 
 		try
-		{
-			// =====================================================
-			// Create new user for the company
-			// =====================================================
-			
-			// Prepare inputs
-			user.setCreatedByUserId( this.loggedUser.getUserId() );
-			user.setUpdatedByUserId( this.loggedUser.getUserId() );
-			UserProfileType companyUserProfileType = UserProfileType.COMPANY;
-			user.setUserProfileId( companyUserProfileType.getUserProfileId() );
-			
-			// Create the user
-			usersDao.createUser(user);
-		
-			
-			
+		{				
 			// =====================================================
 			// Create new company with the new user
 			// =====================================================
 			
-			// Prepare inputs
-			int newUserId = user.getUserId();
-			company.setUserId(newUserId);
-			company.setCreatedByUserId( this.loggedUser.getUserId() );
-			company.setUpdatedByUserId( this.loggedUser.getUserId() );
+			coupon.setCreatedByUserId( this.loggedUser.getUserId() );
+			coupon.setUpdatedByUserId( this.loggedUser.getUserId() );
 	
 			// Create the company
 			companysDao.createCompany(company);
@@ -156,7 +166,6 @@ public class AdminBlo implements IClientBlo {
 			jdbcTransactionManager.commit();
 			
 			PrintUtils.printHeader("createCompany created company");
-			System.out.println(user);
 			System.out.println(company);
 			
 		}

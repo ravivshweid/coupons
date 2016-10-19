@@ -2,6 +2,7 @@ package com.raviv.coupons.system;
 
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.AdminBlo;
+import com.raviv.coupons.blo.CompanyBlo;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
 import com.raviv.coupons.dao.UsersDao;
 import com.raviv.coupons.enums.ErrorType;
@@ -74,7 +75,7 @@ public class CouponsSystem
 		}
 		else if ( userProfileId == companyUserProfileType.getUserProfileId() )
 		{
-				  //clientBlo = new CompanyBlo();			
+				  clientBlo = new CompanyBlo();			
 		}
 		else if ( userProfileId == customerUserProfileType.getUserProfileId() )
 		{
@@ -90,7 +91,6 @@ public class CouponsSystem
 		//    Instantiate relevant client object : ( AdminBlo, CompanyBlo or CustomerBlo)
 		//===================================================================================
 		clientBlo.login(loggedUser);
-
 		
 		//===================================================================================
 		// 4. return client instance
