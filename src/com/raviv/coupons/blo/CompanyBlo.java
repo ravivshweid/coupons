@@ -8,11 +8,11 @@ import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
 import com.raviv.coupons.dao.CompanysDao;
+import com.raviv.coupons.dao.CouponsDao;
 import com.raviv.coupons.dao.CustomersDao;
 import com.raviv.coupons.dao.UsersDao;
 import com.raviv.coupons.dao.interfaces.ICompanysDao;
-import com.raviv.coupons.dao.interfaces.ICustomersDao;
-import com.raviv.coupons.dao.interfaces.IUsersDao;
+import com.raviv.coupons.dao.interfaces.ICouponsDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.enums.UserProfileType;
@@ -21,7 +21,7 @@ import com.raviv.coupons.utils.PrintUtils;
 
 /**
  * 
- * Admin business logic
+ * Company business logic
  * 
  * @author raviv
  *
@@ -30,7 +30,7 @@ public class CompanyBlo implements IClientBlo {
 
 	
 	private	CompanysDao				companysDao;
-	//private CouponsDao			couponsDao;
+	//private CouponsDao				couponsDao;
 	private CustomersDao			customersDao;	
 	private UsersDao				usersDao;
 
@@ -40,7 +40,7 @@ public class CompanyBlo implements IClientBlo {
 	public CompanyBlo() throws ApplicationException
 	{
 		this.companysDao 			= new CompanysDao();
-		//this.couponsDao			= new CouponsDao();
+		//this.couponsDao				= new CouponsDao();
 		this.customersDao			= new CustomersDao();
 		this.usersDao 				= new UsersDao();
 	}
@@ -56,7 +56,7 @@ public class CompanyBlo implements IClientBlo {
 		if ( this.loggedUser == null )
 		{
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "Failed to get user with loginName : " + loginName + ",  loginPassword : " + loginPassword + ", and UserProfileType.ADMIN." );
+					, "Failed to get user with loginName : " + loginName + ",  loginPassword : " + loginPassword + ", and UserProfileType.COMPANY." );
 		}
 		PrintUtils.printHeader("CompanyBlo: User logged in");		
 		System.out.println(loggedUser);
@@ -64,16 +64,8 @@ public class CompanyBlo implements IClientBlo {
 		//==============================================
 		// Get company details with the user id
 		//==============================================		
-		int userId   = this.loggedUser.getUserId();
-		this.company = this.companysDao.getCompanyByUserId(userId);
-		if ( this.company == null )
-		{
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "Failed to get company with userId : " + userId );
-		}
-		PrintUtils.printHeader("CompanyBlo: Company logged in");		
-		System.out.println(company);
-
+		setCompanyWithLoggedUser();
+		
 		return this;
 	}
 	
@@ -96,18 +88,10 @@ public class CompanyBlo implements IClientBlo {
 		//==============================================
 		// Get company details with the user id
 		//==============================================		
-		int userId   = this.loggedUser.getUserId();
-		this.company = this.companysDao.getCompanyByUserId(userId);
-		if ( this.company == null )
-		{
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "Failed to get company with userId : " + userId );
-		}
-		PrintUtils.printHeader("CompanyBlo: Company logged in");		
-		System.out.println(company);
+		setCompanyWithLoggedUser();
 
 
-		return this;
+		return (CompanyBlo) this;
 	}
 
 	private  void 			verifyUserProfileId(User user) throws ApplicationException 
@@ -131,6 +115,12 @@ public class CompanyBlo implements IClientBlo {
 		}		
 		
 		verifyUserProfileId (this.loggedUser);
+
+		if ( this.company == null )
+		{
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null, "Company is not logged in." );			
+		}		
+
 	}
 	
 	public  void 			createCoupon( Coupon coupon ) throws ApplicationException 
@@ -144,7 +134,7 @@ public class CompanyBlo implements IClientBlo {
 		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
 
 		// Inject transaction manager to DAO via constructors
-		//ICouponsDao		couponsDao	= new CouponsDao ( jdbcTransactionManager );
+		ICouponsDao		couponsDao	= new CouponsDao ( jdbcTransactionManager );
 
 		try
 		{				
@@ -154,19 +144,19 @@ public class CompanyBlo implements IClientBlo {
 			
 			coupon.setCreatedByUserId( this.loggedUser.getUserId() );
 			coupon.setUpdatedByUserId( this.loggedUser.getUserId() );
-	
-			// Create the company
-			companysDao.createCompany(company);
-			
+			coupon.setCompanyId		 ( this.company.getCompanyId() );
 
+			// Create the company
+			couponsDao.createCoupon(coupon);
+			
 			// =====================================================
 			// Commit transaction
 			// =====================================================
 
 			jdbcTransactionManager.commit();
 			
-			PrintUtils.printHeader("createCompany created company");
-			System.out.println(company);
+			PrintUtils.printHeader("createCoupon created coupon");
+			System.out.println(coupon);
 			
 		}
 		catch (ApplicationException e)
@@ -186,6 +176,70 @@ public class CompanyBlo implements IClientBlo {
 		}	
 	}
 
+	public  void 			updateCoupon(Coupon inputCoupon) throws ApplicationException 
+	{
+		
+		verifyLoggedUser();
+
+		// =====================================================
+		// Start transaction by creating JdbcTransactionManager
+		// =====================================================		
+		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
+
+		// Inject transaction manager to DAO via constructors
+		ICouponsDao couponsDao	= new CouponsDao( jdbcTransactionManager );
+		
+		try
+		{
+			// =====================================================
+			// Get coupon from data layer
+			// =====================================================			
+			Coupon coupon;
+			coupon = couponsDao.getCoupon( inputCoupon.getCouponId() );
+
+			// =====================================================
+			// Set coupon: end date , price
+			// =====================================================
+			
+			// Prepare inputs
+			coupon.setUpdatedByUserId( this.loggedUser.getUserId()    );
+			
+			coupon.setCouponEndDate  ( inputCoupon.getCouponEndDate() );
+			coupon.setCouponPrice    ( inputCoupon.getCouponPrice()   );
+
+			
+			// =====================================================
+			// Update coupon in data layer
+			// =====================================================			
+			couponsDao.updateCoupon(coupon);
+
+			// =====================================================
+			// Commit transaction
+			// =====================================================
+
+			jdbcTransactionManager.commit();
+			
+			PrintUtils.printHeader("updateCoupon updated coupon");
+			System.out.println(coupon);
+			
+		}
+		catch (ApplicationException e)
+		{
+			// =====================================================
+			// Rollback transaction
+			// =====================================================
+
+			jdbcTransactionManager.rollback();
+			
+			throw (e); 
+			
+		}
+		finally
+		{
+			jdbcTransactionManager.closeConnection();
+		}	
+	}
+	
 	public  void 			updateCompany(Company inputCompany) throws ApplicationException 
 	{
 		
@@ -248,108 +302,28 @@ public class CompanyBlo implements IClientBlo {
 		}	
 	}
 
-	public  List<Company>	getAllCompanys() throws ApplicationException 
+	private  void 			setCompanyWithLoggedUser() throws ApplicationException 
 	{		
-		verifyLoggedUser();
-		
-		List<Company> companysList;
-		companysList = companysDao.getAllCompanys();
-		
-		for ( Company company : companysList )
+		//==============================================
+		// Get company details with the user id
+		//==============================================		
+		int userId   = this.loggedUser.getUserId();
+		this.company = this.companysDao.getCompanyByUserId(userId);
+		if ( this.company == null )
 		{
-			System.out.println(company);
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
+					, "Failed to set company with userId : " + userId );
 		}
-		
-		return companysList;
+		PrintUtils.printHeader("CompanyBlo: Company logged in");		
+		System.out.println(company);					
 	}
 
-	public  Company 		getCompany(long companyId) throws ApplicationException 
-	{		
+	public  Company 		getCompany() throws ApplicationException 
+	{				
 		verifyLoggedUser();
 		
-		Company company;
-		company = companysDao.getCompany(companyId);
-		
-		if ( company == null )
-		{
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, null, "Company not found, companyId : " + companyId );			
-		}
-		
-		System.out.println(company);
-		
-		return company;
+		return this.company;
 	}
-
-	public  void 			createCustomer(User user, Customer customer) throws ApplicationException 
-	{
-		
-		verifyLoggedUser();
-
-		// =====================================================
-		// Start transaction by creating JdbcTransactionManager
-		// =====================================================		
-		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
-
-		// Inject transaction manager to DAO via constructors
-		IUsersDao 		usersDao 		= new UsersDao   	( jdbcTransactionManager );
-		ICustomersDao	customersDao	= new CustomersDao	( jdbcTransactionManager );
-
-		try
-		{
-			// =====================================================
-			// Create new user for the new customer
-			// =====================================================
-			
-			// Prepare inputs
-			user.setCreatedByUserId( this.loggedUser.getUserId() );
-			user.setUpdatedByUserId( this.loggedUser.getUserId() );
-			UserProfileType customerUserProfileType = UserProfileType.CUSTOMER;
-			user.setUserProfileId( customerUserProfileType.getUserProfileId() );
-			
-			// Create the user
-			usersDao.createUser(user);
-		
-			// =====================================================
-			// Create new customer with the new user
-			// =====================================================
-			
-			// Prepare inputs
-			int newUserId = user.getUserId();
-			customer.setUserId(newUserId);
-			customer.setCreatedByUserId( this.loggedUser.getUserId() );
-			customer.setUpdatedByUserId( this.loggedUser.getUserId() );
-	
-			// Create the customer
-			customersDao.createCustomer(customer);
-			
-
-			// =====================================================
-			// Commit transaction
-			// =====================================================
-
-			jdbcTransactionManager.commit();
-			
-			PrintUtils.printHeader("createCustomer created customer");
-			System.out.println(user);
-			System.out.println(customer);
-			
-		}
-		catch (ApplicationException e)
-		{
-			// =====================================================
-			// Rollback transaction
-			// =====================================================
-
-			jdbcTransactionManager.rollback();
-			
-			throw (e); 
-			
-		}
-		finally
-		{
-			jdbcTransactionManager.closeConnection();
-		}	
-	}// createCustomer
 
 	public  List<Customer>	getAllCustomers() throws ApplicationException 
 	{		

@@ -6,7 +6,7 @@ import com.raviv.coupons.blo.AdminBlo;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemAdminBlo060createCustomer {
+public class SystemAdminBlo060createCustomerTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{

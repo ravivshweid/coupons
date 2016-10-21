@@ -4,7 +4,7 @@ import com.raviv.coupons.blo.AdminBlo;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemAdminBlo100getCustomer {
+public class SystemAdminBlo100getCustomerTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{

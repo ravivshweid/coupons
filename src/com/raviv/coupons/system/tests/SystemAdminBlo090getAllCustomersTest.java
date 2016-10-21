@@ -4,7 +4,7 @@ import com.raviv.coupons.blo.AdminBlo;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemAdminBlo050getCompany {
+public class SystemAdminBlo090getAllCustomersTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
@@ -15,9 +15,9 @@ public class SystemAdminBlo050getCompany {
 		
 		adminBlo = (AdminBlo) couponsSystem.login("admin", "1234");
 		
-		System.out.println(adminBlo);
+		//System.out.println(adminBlo);
 		
-		adminBlo.getCompany(5);
+		adminBlo.getAllCustomers();
 
 	}
 

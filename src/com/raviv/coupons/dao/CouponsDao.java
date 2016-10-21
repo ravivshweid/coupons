@@ -15,18 +15,17 @@ import com.raviv.coupons.exceptions.ApplicationException;
 
 public class CouponsDao extends InfraDao implements ICouponsDao {
 
-
-	public CouponsDao() 
+	public 			CouponsDao() 
 	{
 		super();
 	}
 	
-	public CouponsDao(JdbcTransactionManager jdbcTransactionManager) {
+	public 			CouponsDao(JdbcTransactionManager jdbcTransactionManager) {
 		super(jdbcTransactionManager);
 	}
 
 	@Override
-	public void createCoupon(Coupon coupon) throws ApplicationException {
+	public void 	createCoupon(Coupon coupon) throws ApplicationException {
 	
 		PreparedStatement 	preparedStatement	= null;
 		Connection 			connection 			= null;
@@ -59,17 +58,17 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 			preparedStatement = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
 
 			// Replacing question marks with the values inside  the bean.
-			preparedStatement.setInt	(1 ,	coupon.getCreatedByUserId() );
-			preparedStatement.setInt	(2 ,	coupon.getUpdatedByUserId() );
-			preparedStatement.setLong	(3 ,	coupon.getCompanyId() );
-			preparedStatement.setString	(4 ,	coupon.getCouponTitle() );
-			preparedStatement.setLong	(5 ,	coupon.getCouponStartDate() );
-			preparedStatement.setLong	(6 ,	coupon.getCouponEndDate() );
-			preparedStatement.setInt	(7 ,	coupon.getCouponsInStock() );
-			preparedStatement.setInt	(8 ,	coupon.getCouponTypeId() );
-			preparedStatement.setString	(9 ,	coupon.getCouponMessage() );
-			preparedStatement.setDouble  (10,	coupon.getCouponPrice() );
-			preparedStatement.setString	(11,	coupon.getImageFileName() );
+			preparedStatement.setInt		(1 ,	coupon.getCreatedByUserId() );
+			preparedStatement.setInt		(2 ,	coupon.getUpdatedByUserId() );
+			preparedStatement.setLong		(3 ,	coupon.getCompanyId() );
+			preparedStatement.setString		(4 ,	coupon.getCouponTitle() );
+			preparedStatement.setTimestamp	(5 ,	new Timestamp ( coupon.getCouponStartDate() ) );
+			preparedStatement.setTimestamp	(6 ,	new Timestamp ( coupon.getCouponEndDate() )   );
+			preparedStatement.setInt		(7 ,	coupon.getCouponsInStock() );
+			preparedStatement.setInt		(8 ,	coupon.getCouponTypeId() );
+			preparedStatement.setString		(9 ,	coupon.getCouponMessage() );
+			preparedStatement.setDouble 	(10,	coupon.getCouponPrice() );
+			preparedStatement.setString		(11,	coupon.getImageFileName() );
 
 
 			// executeUpdate is a method used in order to : insert, delete, update (not get)
@@ -88,7 +87,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 		} 
 		catch (SQLException e) 
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create coupon due to :" + e.getMessage() );
 		} 
 		finally 
@@ -111,7 +110,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 	}
 	
 	@Override
-	public Coupon getCoupon(long couponId) throws ApplicationException 
+	public Coupon 	getCoupon(long couponId) throws ApplicationException 
 	{
 		Connection 			connection 			= null;
 		PreparedStatement 	preparedStatement 	= null;		
@@ -177,7 +176,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 }
 
 	@Override
-	public void updateCoupon(Coupon coupon) throws ApplicationException 
+	public void 	updateCoupon(Coupon coupon) throws ApplicationException 
 	{
 		PreparedStatement 	preparedStatement	= null;
 		Connection 			connection 			= null;
@@ -247,7 +246,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 	}
 
 	@Override
-	public void deleteCoupon(long coupon) {
+	public void 	deleteCoupon(long coupon) {
 		// TODO Auto-generated method stub
 		
 	}
