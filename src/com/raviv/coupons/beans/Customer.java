@@ -15,6 +15,14 @@ public class Customer extends InfraBean {
 	
 	
 	
+	public Customer() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+
 	@Override
 	public String toString() {
 		return super.toString() + "Customer\t[customerId=" + customerId + ", userId=" + userId + ", customerName=" + customerName + "]\n";

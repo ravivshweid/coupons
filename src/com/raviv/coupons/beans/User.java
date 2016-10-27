@@ -13,10 +13,11 @@ public class User extends InfraBean {
 	private	String                   	loginPassword;
 
 	
-	
-	
-	
-	
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+		
 	
 	@Override
 	public String toString() {

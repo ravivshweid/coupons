@@ -1,20 +1,22 @@
 package com.raviv.coupons.system.tests;
 
-import com.raviv.coupons.beans.Company;
 import com.raviv.coupons.blo.CompanyBlo;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemCompanyBlo240getCompanyTest {
+public class SystemCompanyBlo240getCompanyCouponsTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
 		
 		CouponsSystem 	couponsSystem = CouponsSystem.getInstance();
-		
-		CompanyBlo 		companyBlo;
-		
+
+		/**
+		 *  login as company and get companyBlo
+		 */
+
+		CompanyBlo 		companyBlo;		
 		String usr = "comp1";
 		String pwd = "1234";
 		try
@@ -27,10 +29,8 @@ public class SystemCompanyBlo240getCompanyTest {
 					, "Failed to get user with login name : " + usr + ",  login password : " + pwd );
 		}
 		
-		Company 	company 		= companyBlo.getCompany();
+		companyBlo.getAllCoupons();
 		
-		System.out.println(company);
-
 	}
 
 }

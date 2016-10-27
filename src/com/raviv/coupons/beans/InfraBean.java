@@ -20,6 +20,13 @@ public class InfraBean {
 	private Timestamp   sysUpdateDateTimeStamp;
 	
 	
+	
+	public InfraBean() {
+		//super();
+		// TODO Auto-generated constructor stub
+	}
+
+
 	@Override
 	public String toString() {
 		return "Control\t[createdByUserId=" + createdByUserId + 

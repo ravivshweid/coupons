@@ -30,19 +30,22 @@ public class CompanyBlo implements IClientBlo {
 
 	
 	private	CompanysDao				companysDao;
-	//private CouponsDao				couponsDao;
+	private CouponsDao				couponsDao;
 	private CustomersDao			customersDao;	
 	private UsersDao				usersDao;
 
 	private User 					loggedUser;
 	private Company					company;
 
+	private	boolean					isGetCompanyCouponsFromDao; /*  This is used to improve performance */
+	
 	public CompanyBlo() throws ApplicationException
 	{
-		this.companysDao 			= new CompanysDao();
-		//this.couponsDao				= new CouponsDao();
-		this.customersDao			= new CustomersDao();
-		this.usersDao 				= new UsersDao();
+		this.companysDao 				= new CompanysDao();
+		this.couponsDao					= new CouponsDao();
+		this.customersDao				= new CustomersDao();
+		this.usersDao 					= new UsersDao();
+		this.isGetCompanyCouponsFromDao	= true;
 	}
 	
 	@Override
@@ -89,7 +92,6 @@ public class CompanyBlo implements IClientBlo {
 		// Get company details with the user id
 		//==============================================		
 		setCompanyWithLoggedUser();
-
 
 		return (CompanyBlo) this;
 	}
@@ -154,9 +156,12 @@ public class CompanyBlo implements IClientBlo {
 			// =====================================================
 
 			jdbcTransactionManager.commit();
+		
+			this.isGetCompanyCouponsFromDao = true;
 			
 			PrintUtils.printHeader("createCoupon created coupon");
 			System.out.println(coupon);
+		
 			
 		}
 		catch (ApplicationException e)
@@ -218,6 +223,8 @@ public class CompanyBlo implements IClientBlo {
 			// =====================================================
 
 			jdbcTransactionManager.commit();
+			
+			this.isGetCompanyCouponsFromDao = true;
 			
 			PrintUtils.printHeader("updateCoupon updated coupon");
 			System.out.println(coupon);
@@ -338,6 +345,42 @@ public class CompanyBlo implements IClientBlo {
 		}
 		
 		return customersList;
+	}
+
+	public  List<Coupon>	getAllCoupons() throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		List<Coupon> couponsList;
+				
+		if ( this.isGetCompanyCouponsFromDao == true )
+		{
+			//Lets go to data layer ...
+			this.setCompanyCoupons();
+			// Lets raise a flag and say there is no need to use data layer next time, for better performance
+			this.isGetCompanyCouponsFromDao = false;			
+		}
+		
+		// Get the coupons from Company bean
+		couponsList = company.getCoupons();
+				
+		for ( Coupon coupon : couponsList )
+		{
+			System.out.println(coupon);
+		}
+		
+		return couponsList;
+	}
+
+	private  void			setCompanyCoupons() throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		List<Coupon> couponsList;
+		long companyId 	= company.getCompanyId();
+		couponsList 	= couponsDao.getCouponsByCompanyId(companyId);
+		//set coupons list in the bean
+		company.setCoupons(couponsList);
 	}
 
 	public  Customer 		getCustomer(long customerId) throws ApplicationException 

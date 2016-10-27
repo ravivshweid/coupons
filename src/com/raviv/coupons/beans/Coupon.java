@@ -26,6 +26,11 @@ public class Coupon extends InfraBean {
 	
 	
 	
+	public Coupon() {
+		super();
+	}
+
+
 	@Override
 	public String toString() {
 		return  super.toString() + "Coupon\t[couponId=" + couponId + ", companyId=" + companyId + ", couponTitle=" + couponTitle

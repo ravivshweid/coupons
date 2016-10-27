@@ -1,5 +1,7 @@
 package com.raviv.coupons.beans;
 
+import java.util.List;
+
 public class Company extends InfraBean {
 
 	private	long                     	companyId;
@@ -11,27 +13,39 @@ public class Company extends InfraBean {
 	private	String                   	companyName;
 	private	String                   	companyEmail;
 	
+	private List<Coupon>				coupons;	
 	
 	
-	
+	public Company() 
+	{
+		super();
+	}
+
+	public List<Coupon> getCoupons() {
+		return coupons;
+	}
+
+	public void setCoupons(List<Coupon> coupons) {
+		this.coupons = coupons;
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + "Company\t[companyId=" + companyId + ", userId=" + userId + ", companyName=" + companyName + ", companyEmail=" + companyEmail + "]\n";
 	}
 	
-	
-	
-	
-	
 	public long getCompanyId() {
 		return companyId;
 	}
+	
 	public void setCompanyId(long companyId) {
 		this.companyId = companyId;
 	}
+	
 	public int getUserId() {
 		return userId;
 	}
+	
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
