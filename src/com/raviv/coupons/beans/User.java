@@ -12,12 +12,25 @@ public class User extends InfraBean {
 	private	String                   	loginName;
 	private	String                   	loginPassword;
 
-	
+
+	/**
+	 * Default constructor
+	 */
 	public User() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 		
+	/**
+	 * Default constructor
+	 */
+	public User( String userName, String loginName, String loginPwd ) {
+		super();
+		setUserName			( userName 	);
+		setLoginName		( loginName	);
+		setLoginPassword	( loginPwd 	);
+	}
+
 	
 	@Override
 	public String toString() {

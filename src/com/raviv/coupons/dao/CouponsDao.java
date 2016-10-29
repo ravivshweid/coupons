@@ -16,13 +16,18 @@ import com.raviv.coupons.dao.interfaces.ICouponsDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
+import com.raviv.coupons.utils.YyyyMmDd;
 
 public class CouponsDao extends InfraDao implements ICouponsDao {
 
+	/**
+	 * Default constructor
+	 */
 	public 					CouponsDao() 
 	{
 		super();
 	}
+	
 	
 	public 					CouponsDao(JdbcTransactionManager jdbcTransactionManager) {
 		super(jdbcTransactionManager);
@@ -315,7 +320,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 			sql = "";
 			sql += "\n  SELECT * FROM COUPONS ";
 			sql += "\n  WHERE";
-			sql += "\n      	COMPANY_ID = ? ";
+			sql += "\n		COMPANY_ID = ? ";
 
 			// Build dynamic where clause
 			for ( Map.Entry<String, String> entry:  dynamicQueryParameters.getQueryParameters().entrySet() )
@@ -328,35 +333,35 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 				
 				if ( DynamicQueryParameters.COUPON_TYPE_ID.equals(paramName) )
 				{
-					sql += "\n    AND    COUPON_TYPE_ID = ? ";
+					sql += "\n		AND	COUPON_TYPE_ID = ? ";
 					continue;
 				}
 				if ( DynamicQueryParameters.FROM_PRICE.equals(paramName) )
 				{
-					sql += "\n    AND  	COUPON_PRICE >= ? ";
+					sql += "\n		AND	COUPON_PRICE >= ? ";
 					continue;
 				}
 				if ( DynamicQueryParameters.TO_PRICE.equals(paramName) )
 				{
-					sql += "\n    AND  	COUPON_PRICE <= ? ";
+					sql += "\n		AND	COUPON_PRICE <= ? ";
 					continue;
 				}
 				if ( DynamicQueryParameters.FROM_DATE.equals(paramName) )
 				{
-					sql += "\n    AND  	COUPON_END_DATE >= ? ";
+					sql += "\n		AND	COUPON_END_DATE >= ? ";
 					continue;
 				}
 				if ( DynamicQueryParameters.TO_DATE.equals(paramName) )
 				{
-					sql += "\n    AND  	COUPON_START_DATE <= ? ";
+					sql += "\n		AND	COUPON_START_DATE <= ? ";
 					continue;
 				}
 			}
 			
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setLong( 1, companyId);
-
-			int i = 2;
+			int i = 1;
+			preparedStatement.setLong( i , companyId);
+			i++;	
 			// Set dynamic where clause parameters
 			for ( Map.Entry<String, String> entry:  dynamicQueryParameters.getQueryParameters().entrySet() )
 			{
@@ -364,7 +369,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 				String paramValue = entry.getValue();
 				if ( paramName  == null) continue;
 				if ( paramValue == null) continue;
-				System.out.println("parameter name is " + paramName + " Paramter value is " + paramValue );
+				//System.out.println("parameter name is " + paramName + " Paramter value is " + paramValue );
 				
 				if ( DynamicQueryParameters.COUPON_TYPE_ID.equals(paramName) )
 				{
@@ -392,8 +397,9 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 				}
 				if ( DynamicQueryParameters.FROM_DATE.equals(paramName) )
 				{
-					Long 		fromDate 			= Long.parseLong(paramValue);
-					Timestamp	fromDateTimestamp	= new Timestamp(fromDate);
+					//Long 		fromDate 			= Long.parseLong(paramValue);
+					//Timestamp	fromDateTimestamp	= new Timestamp(fromDate);
+					Timestamp	fromDateTimestamp	= (new YyyyMmDd(paramValue)).toTimestamp();
 					preparedStatement.setTimestamp( i , fromDateTimestamp );
 					i++;
 					//sql += " AND  	COUPON_END_DATE >= ? ";
@@ -401,8 +407,9 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 				}
 				if ( DynamicQueryParameters.TO_DATE.equals(paramName) )
 				{
-					Long 		toDate 			= Long.parseLong(paramValue);
-					Timestamp	toDateTimestamp	= new Timestamp(toDate);
+					//Long 		toDate 			= Long.parseLong(paramValue);
+					//Timestamp	toDateTimestamp	= new Timestamp(toDate);
+					Timestamp	toDateTimestamp	= (new YyyyMmDd(paramValue)).toTimestamp();
 					preparedStatement.setTimestamp( i , toDateTimestamp );
 					i++;
 					//sql += " AND  	COUPON_START_DATE <= ? ";

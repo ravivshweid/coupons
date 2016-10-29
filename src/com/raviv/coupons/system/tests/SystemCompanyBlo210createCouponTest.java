@@ -1,102 +1,80 @@
 package com.raviv.coupons.system.tests;
 
-import java.sql.Timestamp;
-
 import com.raviv.coupons.beans.Coupon;
 import com.raviv.coupons.blo.CompanyBlo;
 import com.raviv.coupons.enums.CouponType;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
+import com.raviv.coupons.utils.YyyyMmDd;
 
 public class SystemCompanyBlo210createCouponTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
-		
-		CouponsSystem 	couponsSystem = CouponsSystem.getInstance();
-		
 		/**
 		 *  login as company and get companyBlo
 		 */
+		CouponsSystem 	couponsSystem = CouponsSystem.getInstance();
 		CompanyBlo 		companyBlo;
-		
-		String usr = "comp1";
-		String pwd = "1234";
 		try
 		{
-			companyBlo = 	(CompanyBlo) couponsSystem.login( usr , pwd );
+			companyBlo = 	(CompanyBlo) couponsSystem.login( "comp1" , "1234" );
 		}
 		catch (Exception e)
 		{
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "Failed to get user with login name : " + usr + ",  login password : " + pwd );
+					, "Login failed" );
 		}				
-	
+			
+		Coupon 	coupon;
 		/**
 		 *  Create 1st coupon
 		 */
-	
-		Coupon 	coupon 		= new Coupon();
-
-		coupon.setCouponTitle("coupon1 Title");		
-
-		CouponType  couponType = CouponType.ENTERTAINMENT;
-		int couponTypeId = couponType.getCouponType();
-		coupon.setCouponTypeId(couponTypeId);
-
-		
-		Timestamp ts = Timestamp.valueOf(String.format("%04d-%02d-%02d 00:00:00", 2016 , 10 ,  21 ));
-		long couponStartDate = ts.getTime();
-		coupon.setCouponStartDate(couponStartDate);
-		
-		ts = Timestamp.valueOf(String.format("%04d-%02d-%02d 00:00:00", 2016 , 12 ,  31 ));
-		long couponEndDate = ts.getTime();
-		coupon.setCouponEndDate(couponEndDate);
-
-		coupon.setCouponMessage("coupon1 message");
-		coupon.setCouponPrice(75);
-		coupon.setCouponsInStock(100);
-		coupon.setImageFileName("2 imageFileName");
-		
-		
-		//System.out.println(company);
+		coupon	= new Coupon (
+								"coupon1 Title"
+								, new YyyyMmDd ("20160101")
+								, new YyyyMmDd ("20160601")
+								, 100
+								, CouponType.ENTERTAINMENT.getCouponType()
+								, "coupon1 message"						
+								, 70 
+								, "1 imageFileName"	
+							 ) ;
 		
 		companyBlo.createCoupon(coupon);
-
-		//System.out.println(user);
-		//System.out.println(company);
-		
 
 		/**
 		 * 
 		 *  Create 2nd coupon
 		 */
-		
-	
-		coupon 		= new Coupon();
+		coupon	= new Coupon (
+								"coupon2 Title"
+								, new YyyyMmDd ("20160602")
+								, new YyyyMmDd ("20161231")
+								, 100
+								, CouponType.HOLIDAY.getCouponType()
+								, "coupon2 message"						
+								, 80 
+								, "2 imageFileName"	
+							 ) ;
+		companyBlo.createCoupon(coupon);
 
-		coupon.setCouponTitle("coupon2 Title");		
 
-		couponType = CouponType.HOLIDAY;
-		couponTypeId = couponType.getCouponType();
-		coupon.setCouponTypeId(couponTypeId);
-
-		
-		ts = Timestamp.valueOf(String.format("%04d-%02d-%02d 00:00:00", 2016 , 10 ,  27 ));
-		couponStartDate = ts.getTime();
-		coupon.setCouponStartDate(couponStartDate);
-		
-		ts = Timestamp.valueOf(String.format("%04d-%02d-%02d 00:00:00", 2016 , 12 ,  31 ));
-		couponEndDate = ts.getTime();
-		coupon.setCouponEndDate(couponEndDate);
-
-		
-		coupon.setCouponMessage("coupon2 message");
-		coupon.setCouponPrice(75);
-		coupon.setCouponsInStock(100);
-		coupon.setImageFileName("1 imageFileName");
-		
+		/**
+		 * 
+		 *  Create 3rd coupon
+		 */
+		coupon	= new Coupon (
+								"coupon3 Title"
+								, new YyyyMmDd ("20170602")
+								, new YyyyMmDd ("20171231")
+								, 100
+								, CouponType.HOLIDAY.getCouponType()
+								, "coupon3 message"						
+								, 90 
+								, "3 imageFileName"	
+							 ) ;
 		companyBlo.createCoupon(coupon);
 
 		

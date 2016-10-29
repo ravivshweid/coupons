@@ -11,15 +11,15 @@ public class Customer extends InfraBean {
 	private	String                   	customerName;
 	
 	
-	
-	
-	
-	
 	public Customer() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
+	public Customer(String customerName) {
+		super();
+		setCustomerName( customerName );
+	}
 
 
 

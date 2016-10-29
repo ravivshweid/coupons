@@ -2,6 +2,8 @@ package com.raviv.coupons.beans;
 
 import java.sql.Timestamp;
 
+import com.raviv.coupons.utils.YyyyMmDd;
+
 public class Coupon extends InfraBean {
 
 
@@ -25,12 +27,54 @@ public class Coupon extends InfraBean {
 	private Timestamp   				couponEndDateTimeStamp;
 	
 	
-	
+	/**
+	 * Default constructor
+	 */
+
 	public Coupon() {
 		super();
 	}
 
 
+	/**
+	 * Constructor for update 
+	 */
+	public Coupon( long couponId, YyyyMmDd couponEndDate, double couponPrice ) 
+	{
+		super();
+		setCouponId			( couponId					);		
+		setCouponEndDate	( couponEndDate.toLong() 	);
+		setCouponPrice		( couponPrice				);
+	}
+
+	/**
+	 * Constructor for create
+	 */
+	/**
+	 * Constructor for update 
+	 */
+	public Coupon	( 
+						  String 	couponTitle
+						, YyyyMmDd	couponStartDate
+						, YyyyMmDd 	couponEndDate
+						, int       couponsInStock
+						, int       couponTypeId
+						, String    couponMessage						
+						, double 	couponPrice 
+						, String    imageFileName						
+			) 
+	{
+		super();
+		setCouponTitle		( couponTitle				);
+		setCouponStartDate	( couponStartDate.toLong() 	);
+		setCouponEndDate	( couponEndDate.toLong() 	);
+		setCouponsInStock	( couponsInStock			);
+		setCouponTypeId		( couponTypeId				);
+		setCouponPrice		( couponPrice				);
+		setImageFileName	( imageFileName				);		
+	}
+
+	
 	@Override
 	public String toString() {
 		return  super.toString() + "Coupon\t[couponId=" + couponId + ", companyId=" + companyId + ", couponTitle=" + couponTitle

@@ -18,15 +18,9 @@ public class SystemAdminBlo060createCustomerTest {
 		adminBlo = (AdminBlo) couponsSystem.login("admin", "1234");
 		
 		//System.out.println(adminBlo);
-		User user = new User();		
-		user.setUserName( "Raviv Shweid" );
-		user.setLoginName( "raviv8" );
-		user.setLoginPassword( "unix11" );
-		//System.out.println(user);
+		User user = new User( "Raviv Shweid" , "raviv9" , "unix11" );
 
-		Customer customer = new Customer();
-		customer.setCustomerName("CUSTOMER 4");
-		//System.out.println(company);
+		Customer customer = new Customer("CUSTOMER 4");
 		
 		adminBlo.createCustomer(user, customer);
 		//System.out.println(user);

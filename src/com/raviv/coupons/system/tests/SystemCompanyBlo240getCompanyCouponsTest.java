@@ -9,26 +9,24 @@ public class SystemCompanyBlo240getCompanyCouponsTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
-		
-		CouponsSystem 	couponsSystem = CouponsSystem.getInstance();
-
 		/**
 		 *  login as company and get companyBlo
 		 */
-
-		CompanyBlo 		companyBlo;		
-		String usr = "comp1";
-		String pwd = "1234";
+		CouponsSystem 	couponsSystem = CouponsSystem.getInstance();
+		CompanyBlo 		companyBlo;
 		try
 		{
-			companyBlo = 	(CompanyBlo) couponsSystem.login( usr , pwd );
+			companyBlo = 	(CompanyBlo) couponsSystem.login( "comp1" , "1234" );
 		}
 		catch (Exception e)
 		{
 			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "Failed to get user with login name : " + usr + ",  login password : " + pwd );
-		}
+					, "Login failed" );
+		}	
 		
+		/**
+		 * Get company coupons
+		 */
 		companyBlo.getAllCoupons();
 		
 	}

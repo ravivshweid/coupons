@@ -351,6 +351,8 @@ public class CompanyBlo implements IClientBlo {
 	{		
 		verifyLoggedUser();
 		
+		PrintUtils.printHeader ("CompanyBlo: getAllCoupons");
+		
 		List<Coupon> couponsList;
 				
 		if ( this.isGetCompanyCouponsFromDao == true )
@@ -376,11 +378,27 @@ public class CompanyBlo implements IClientBlo {
 	{		
 		verifyLoggedUser();
 		
-		List<Coupon> couponsList;
 		long companyId 	= company.getCompanyId();
-		couponsList 	= couponsDao.getCouponsByCompanyId(companyId);
+		List<Coupon> couponsList 	= couponsDao.getCouponsByCompanyId(companyId);
 		//set coupons list in the bean
 		company.setCoupons(couponsList);
+	}
+
+	public  List<Coupon>	getCouponsQuery( DynamicQueryParameters dynamicQueryParameters) throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		PrintUtils.printHeader ("CompanyBlo: getCouponsQuery");
+		
+		long companyId 	= company.getCompanyId();
+		List<Coupon> couponsList 	= couponsDao.getCouponsByCompanyIdAndDynamicFilter( companyId , dynamicQueryParameters);
+
+		for ( Coupon coupon : couponsList )
+		{
+			System.out.println(coupon);
+		}
+	
+		return couponsList;
 	}
 
 	public  Customer 		getCustomer(long customerId) throws ApplicationException 
@@ -399,6 +417,5 @@ public class CompanyBlo implements IClientBlo {
 		
 		return customer;
 	}
-
 
 }
