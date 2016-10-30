@@ -1,11 +1,11 @@
 package com.raviv.coupons.system.tests;
 
-import com.raviv.coupons.blo.CompanyBlo;
+import com.raviv.coupons.blo.CustomerBlo;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemCompanyBlo200LoginTest {
+public class SystemCustomerBlo300LoginTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
@@ -13,18 +13,20 @@ public class SystemCompanyBlo200LoginTest {
 		 *  login as company and get companyBlo
 		 */
 		CouponsSystem 	couponsSystem = CouponsSystem.getInstance();
-		CompanyBlo 		companyBlo;
+		CustomerBlo 	customerBlo;
 		try
 		{
-			companyBlo = 	(CompanyBlo) couponsSystem.login( "comp1" , "1234" );
+			customerBlo = 	(CustomerBlo) couponsSystem.login( "cust3" , "1234" );
 		}
 		catch (Exception e)
 		{
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
-					, "Login failed" );
-		}	
+			throw new ApplicationException(ErrorType.LOGIN_ERROR, e , "Login failed" );
+		}
 		
-		System.out.println(companyBlo);
+		/**
+		 *  login success
+		 */		
+		System.out.println(customerBlo);
 
 	}
 

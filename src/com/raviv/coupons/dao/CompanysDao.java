@@ -325,6 +325,5 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		company.setCompanyName    	( resultSet.getString    ( "COMPANY_NAME" ) );
 		company.setCompanyEmail   	( resultSet.getString    ( "COMPANY_EMAIL" ) );
 	}
-
 	
 }

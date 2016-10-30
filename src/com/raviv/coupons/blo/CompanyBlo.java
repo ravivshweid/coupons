@@ -4,12 +4,10 @@ import java.util.List;
 
 import com.raviv.coupons.beans.Company;
 import com.raviv.coupons.beans.Coupon;
-import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
 import com.raviv.coupons.dao.CompanysDao;
 import com.raviv.coupons.dao.CouponsDao;
-import com.raviv.coupons.dao.CustomersDao;
 import com.raviv.coupons.dao.UsersDao;
 import com.raviv.coupons.dao.interfaces.ICompanysDao;
 import com.raviv.coupons.dao.interfaces.ICouponsDao;
@@ -31,7 +29,7 @@ public class CompanyBlo implements IClientBlo {
 	
 	private	CompanysDao				companysDao;
 	private CouponsDao				couponsDao;
-	private CustomersDao			customersDao;	
+	//private CustomersDao			customersDao;	
 	private UsersDao				usersDao;
 
 	private User 					loggedUser;
@@ -43,7 +41,7 @@ public class CompanyBlo implements IClientBlo {
 	{
 		this.companysDao 				= new CompanysDao();
 		this.couponsDao					= new CouponsDao();
-		this.customersDao				= new CustomersDao();
+		//this.customersDao				= new CustomersDao();
 		this.usersDao 					= new UsersDao();
 		this.isGetCompanyCouponsFromDao	= true;
 	}
@@ -332,21 +330,6 @@ public class CompanyBlo implements IClientBlo {
 		return this.company;
 	}
 
-	public  List<Customer>	getAllCustomers() throws ApplicationException 
-	{		
-		verifyLoggedUser();
-		
-		List<Customer> customersList;
-		customersList = customersDao.getAllCustomers();
-		
-		for ( Customer customer : customersList )
-		{
-			System.out.println(customer);
-		}
-		
-		return customersList;
-	}
-
 	public  List<Coupon>	getAllCoupons() throws ApplicationException 
 	{		
 		verifyLoggedUser();
@@ -374,16 +357,6 @@ public class CompanyBlo implements IClientBlo {
 		return couponsList;
 	}
 
-	private  void			setCompanyCoupons() throws ApplicationException 
-	{		
-		verifyLoggedUser();
-		
-		long companyId 	= company.getCompanyId();
-		List<Coupon> couponsList 	= couponsDao.getCouponsByCompanyId(companyId);
-		//set coupons list in the bean
-		company.setCoupons(couponsList);
-	}
-
 	public  List<Coupon>	getCouponsQuery( DynamicQueryParameters dynamicQueryParameters) throws ApplicationException 
 	{		
 		verifyLoggedUser();
@@ -401,21 +374,14 @@ public class CompanyBlo implements IClientBlo {
 		return couponsList;
 	}
 
-	public  Customer 		getCustomer(long customerId) throws ApplicationException 
+	private  void			setCompanyCoupons() throws ApplicationException 
 	{		
 		verifyLoggedUser();
 		
-		Customer customer;
-		customer = customersDao.getCustomer(customerId);
-		
-		if ( customer == null )
-		{
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, null, "Customer not found, customerId : " + customerId );			
-		}
-		
-		System.out.println(customer);
-		
-		return customer;
+		long companyId 	= company.getCompanyId();
+		List<Coupon> couponsList 	= couponsDao.getCouponsByCompanyId(companyId);
+		//set coupons list in the bean
+		company.setCoupons(couponsList);
 	}
 
 }

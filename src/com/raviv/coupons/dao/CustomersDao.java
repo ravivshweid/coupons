@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.dao.interfaces.ICustomersDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
@@ -73,7 +74,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		catch (SQLException e) 
 		{
 			//e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create customer due to :" + e.getMessage() );
+			throw new ApplicationException(ErrorType.DAO_CREATE_ERROR, e, "Failed to create customer due to :" + e.getMessage() );
 		} 
 		finally 
 		{
@@ -124,7 +125,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get coupon with id : " + customerId + " " + e.getMessage());
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get customer with id : " + customerId + " " + e.getMessage());
 		} 
 		finally 
 		{
@@ -142,6 +143,56 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		
 		return returnObj;
 }
+
+	public Customer 		getCustomerByUserId(long userId) throws ApplicationException {
+		Connection 			connection 			= null;
+		PreparedStatement 	preparedStatement 	= null;		
+		ResultSet 			resultSet 			= null;
+		Customer 			returnObj 			= new Customer();
+
+	// getting the specific entry by the input id
+	// storing it into resultSet
+		try 
+		{
+			// Getting a connection from the connections manager or Transaction manager
+			connection = super.getConnection();
+			
+			String sql = "SELECT * FROM CUSTOMERS WHERE USER_ID = ?";
+			
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setLong(1, userId);
+			
+			// execute query
+			resultSet = preparedStatement.executeQuery();
+	
+			// Not found ...
+			if ( !resultSet.next() ) { return null; } 
+						
+			//extract bean from result Set
+			this.copyDataFromResultSetToBean (returnObj, resultSet);
+			
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get customer with userId : " + userId + " " + e.getMessage());
+		} 
+		finally 
+		{
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
+			}				
+		}
+		
+		return returnObj;
+	}
 
 	@Override
 	public void 			updateCustomer(Customer customer) throws ApplicationException 
@@ -181,7 +232,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create customer due to :" + e.getMessage() );
+			throw new ApplicationException(ErrorType.DAO_UPDATE_ERROR, e, "Failed to update customer due to :" + e.getMessage() );
 		} 
 		finally 
 		{
@@ -240,7 +291,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get all customers" + e.getMessage());
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get all customers" + e.getMessage());
 		} 
 		finally 
 		{

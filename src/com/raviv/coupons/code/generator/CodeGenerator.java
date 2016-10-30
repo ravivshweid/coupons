@@ -1,4 +1,4 @@
-package com.raviv.coupons.tests;
+package com.raviv.coupons.code.generator;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 import com.raviv.coupons.dao.utils.ConnectionPoolManager;
 
-public class TestConnectionPoolManager 
+public class CodeGenerator 
 {
 
 	public static void main(String[] args) throws Exception {
@@ -20,57 +20,57 @@ public class TestConnectionPoolManager
 		String tableName;
 		
 		//tableName = "COMPANYS";
-		//tableName = "COUPONS";
+		tableName = "COUPONS";
 		//tableName = "CUSTOMER_COUPON";
 		//tableName = "CUSTOMERS";		
-		tableName = "USERS";
+		//tableName = "USERS";
 		
 		
 		
 
 		// Java bean
-		//printTable( tableName, 25, con1);
+		//generateJavaBean( tableName, 25, con1);
 		
 		// Create method
-		//printTableInsertStatment( tableName, 25, con1);
+		//generateInsertStatmentCode( tableName, 25, con1);
 
 		// get method
-		//printTableGetStatment( tableName, 25, con1);
+		//generateSelectStatmentCode( tableName, 25, con1);
 
 		// Update method
-		printTableUpdateStatment( tableName, 25, con1);
+		generateUpdateStatmentCode( tableName, 25, con1);
 		
 		
 		connectionPoolManager.returnConnection(con1);
 
-		//printTable ( tableName, 25, con1);
+		//generateJavaBean ( tableName, 25, con1);
 		
 		/*
 		Connection con2 = ConnectionPoolManager.getConnection();
-		printTable ("COMPANY", 25, con2);
+		generateJavaBean ("COMPANY", 25, con2);
 		
 		ConnectionPoolManager.returnConnection(con1);
 		ConnectionPoolManager.returnConnection(con2);
 
 		
 		Connection con3 = ConnectionPoolManager.getConnection();		
-		printTable ("CUSTOMER", 25, con3);
+		generateJavaBean ("CUSTOMER", 25, con3);
 
 		Connection con4 = ConnectionPoolManager.getConnection();		
-		printTable ("USER_PROFILE", 25, con4);
+		generateJavaBean ("USER_PROFILE", 25, con4);
 
-		printTable ("USERS", 24, con4);
+		generateJavaBean ("USERS", 24, con4);
 		ConnectionPoolManager.returnConnection(con3);
 		ConnectionPoolManager.returnConnection(con4);
 		
-		printTable ("COUPON", 24, con4);
+		generateJavaBean ("COUPON", 24, con4);
 		*/
 		
 		connectionPoolManager.closeAllConnections();
 	}
 
 	@SuppressWarnings("unused")
-	private static void printTable(String tableName, int columnWidth, Connection con) throws SQLException 
+	private static void generateJavaBean(String tableName, int columnWidth, Connection con) throws SQLException 
 	{
 		if ( con == null 	) 	{return;}
 		if ( con.isClosed() )	{return;}
@@ -172,7 +172,7 @@ public class TestConnectionPoolManager
 	}// end printUserProfileTable
 
 	@SuppressWarnings("unused")
-	private static void printTableInsertStatment(String tableName, int columnWidth, Connection con) throws SQLException 
+	private static void generateInsertStatmentCode(String tableName, int columnWidth, Connection con) throws SQLException 
 	{
 		if ( con == null 	) 	{return;}
 		if ( con.isClosed() )	{return;}
@@ -303,7 +303,7 @@ public class TestConnectionPoolManager
 	}// end 
 
 	@SuppressWarnings("unused")
-	private static void printTableUpdateStatment(String tableName, int columnWidth, Connection con) throws SQLException 
+	private static void generateUpdateStatmentCode(String tableName, int columnWidth, Connection con) throws SQLException 
 	{
 		if ( con == null 	) 	{return;}
 		if ( con.isClosed() )	{return;}
@@ -497,9 +497,8 @@ public class TestConnectionPoolManager
 		}
 	}// end 
 
-	
 	@SuppressWarnings("unused")
-	private static void printTableGetStatment(String tableName, int columnWidth, Connection con) throws SQLException 
+	private static void generateSelectStatmentCode(String tableName, int columnWidth, Connection con) throws SQLException 
 	{
 		if ( con == null 	) 	{return;}
 		if ( con.isClosed() )	{return;}
@@ -627,7 +626,6 @@ public class TestConnectionPoolManager
 			rs.close();
 		}
 	}// end 
-
 	
 	@SuppressWarnings("unused")
 	private static void printCoupon(String tableName, int columnWidth, Connection con) throws SQLException 
@@ -767,7 +765,6 @@ public class TestConnectionPoolManager
 		return s.substring(0, 1).toUpperCase() + s.substring(1);				
 	}
 
-	
 	static String sqToJavaPrimitive(String s)
 	{
 		

@@ -16,8 +16,8 @@ public class InfraBean {
 	private int   		createdByUserId;
 	private int   		updatedByUserId;
 	
-	private Timestamp   sysCreationDateTimeStamp;
-	private Timestamp   sysUpdateDateTimeStamp;
+	private Timestamp   sysCreationDateTimeStamp; 	// We will use this for printing, more elegant than ugly long ...
+	private Timestamp   sysUpdateDateTimeStamp;		// We will use this for printing, more elegant than ugly long ...
 	
 	
 	

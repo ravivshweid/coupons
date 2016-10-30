@@ -3,6 +3,7 @@ package com.raviv.coupons.system;
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.blo.AdminBlo;
 import com.raviv.coupons.blo.CompanyBlo;
+import com.raviv.coupons.blo.CustomerBlo;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
 import com.raviv.coupons.dao.UsersDao;
 import com.raviv.coupons.enums.ErrorType;
@@ -79,7 +80,7 @@ public class CouponsSystem
 		}
 		else if ( userProfileId == customerUserProfileType.getUserProfileId() )
 		{
-				  //clientBlo = new CustomerBlo();
+				  clientBlo = new CustomerBlo();
 		}
 		else
 		{

@@ -1,5 +1,7 @@
 package com.raviv.coupons.beans;
 
+import java.util.List;
+
 public class Customer extends InfraBean {
 
 	private	long                     	customerId;
@@ -10,6 +12,7 @@ public class Customer extends InfraBean {
 	private	int                      	userId;
 	private	String                   	customerName;
 	
+	private List<Coupon>				coupons;
 	
 	public Customer() {
 		super();
@@ -21,7 +24,13 @@ public class Customer extends InfraBean {
 		setCustomerName( customerName );
 	}
 
+	public List<Coupon> getCoupons() {
+		return coupons;
+	}
 
+	public void setCoupons(List<Coupon> coupons) {
+		this.coupons = coupons;
+	}
 
 	@Override
 	public String toString() {

@@ -30,7 +30,6 @@ public class Coupon extends InfraBean {
 	/**
 	 * Default constructor
 	 */
-
 	public Coupon() {
 		super();
 	}
@@ -49,9 +48,6 @@ public class Coupon extends InfraBean {
 
 	/**
 	 * Constructor for create
-	 */
-	/**
-	 * Constructor for update 
 	 */
 	public Coupon	( 
 						  String 	couponTitle
