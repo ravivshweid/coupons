@@ -9,8 +9,6 @@ public interface ICustomerCouponDao {
 
 	public CustomerCoupon	getCustomerCoupon	  	( long customerId, long couponId	) throws ApplicationException;
 
-	public void 			updateCustomerCoupon	( CustomerCoupon	customerCoupon	) throws ApplicationException;
-
 	public void 			deleteCustomerCoupon	( long				internalId		) throws ApplicationException;
 	
 }

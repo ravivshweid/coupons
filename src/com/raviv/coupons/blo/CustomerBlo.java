@@ -41,10 +41,12 @@ public class CustomerBlo implements IClientBlo {
 	public CustomerBlo() throws ApplicationException
 	{
 		//this.companysDao 				= new CompanysDao();
+		
 		this.couponsDao					= new CouponsDao();
 		this.customersDao				= new CustomersDao();
 		this.usersDao 					= new UsersDao();
-		this.isGetCustomerCouponsFromDao	= true;
+		this.customerCouponDao			= new CustomerCouponDao();
+		this.isGetCustomerCouponsFromDao= true;
 	}
 	
 	@Override
@@ -177,7 +179,7 @@ public class CustomerBlo implements IClientBlo {
 		if ( customerCoupon != null ) 
 		{
 			throw new ApplicationException(ErrorType.DUPLICATE_COUPON_FOR_CUSTOMER, null
-					, "CustomerBlo : buyCoupon Failed. Coupon exists already, couponId : " + couponId  );
+					, "CustomerBlo : buyCoupon Failed. Duplicate coupon for customer, couponId : " + couponId  );
 		}
 		
 		
@@ -251,13 +253,13 @@ public class CustomerBlo implements IClientBlo {
 		return this.customer;
 	}
 
-	public  List<Coupon>		getCustomerCoupons() throws ApplicationException 
+	public  List<CustomerCoupon>getCustomerCoupons() throws ApplicationException 
 	{		
 		verifyLogin();
 		
 		PrintUtils.printHeader ("CustomerBLo: getAllCoupons");
 		
-		List<Coupon> couponsList;
+		List<CustomerCoupon>	customerCoupons;
 				
 		if ( this.isGetCustomerCouponsFromDao == true )
 		{
@@ -268,17 +270,34 @@ public class CustomerBlo implements IClientBlo {
 		}
 		
 		// Get the coupons from customer bean
-		couponsList = customer.getCoupons();
+		customerCoupons = customer.getCustomerCoupons();
 				
-		for ( Coupon coupon : couponsList )
+		for ( CustomerCoupon customerCoupon : customerCoupons )
 		{
-			System.out.println(coupon);
+			System.out.println(customerCoupon);
 		}
 		
-		return couponsList;
+		return customerCoupons;
 	}
 
-	public  List<Coupon>	getCouponsQuery( DynamicQueryParameters dynamicQueryParameters) throws ApplicationException 
+	public  List<CustomerCoupon>getCustomerCouponsQuery( DynamicQueryParameters dynamicQueryParameters ) throws ApplicationException 
+	{		
+		verifyLogin();
+		
+		PrintUtils.printHeader ("CustomerBLo: getCustomerCouponsQuery");
+
+		long customerId 		= customer.getCustomerId();
+		List<CustomerCoupon>	customerCoupons= customerCouponDao.getCustomerCouponsByCustomerIdAndDynamicFilter( customerId , dynamicQueryParameters);
+										
+		for ( CustomerCoupon customerCoupon : customerCoupons )
+		{
+			System.out.println(customerCoupon);
+		}
+		
+		return customerCoupons;
+	}
+
+	public  List<Coupon>		getCouponsQuery( DynamicQueryParameters dynamicQueryParameters) throws ApplicationException 
 	{		
 		verifyLogin();
 		
@@ -299,10 +318,10 @@ public class CustomerBlo implements IClientBlo {
 	{		
 		verifyLogin();
 		
-		long 			customerId	= customer.getCustomerId();
-		List<Coupon>	couponsList = customerCouponDao.getCouponsByCompanyId(customerId);
+		long 					customerId		= customer.getCustomerId();
+		List<CustomerCoupon>	customerCoupons	= customerCouponDao.getCustomerCouponsByCustomerId(customerId);
 		//set coupons list in the bean
-		customer.setCoupons(couponsList);
+		customer.setCustomerCoupons(customerCoupons);
 	}
 
 }

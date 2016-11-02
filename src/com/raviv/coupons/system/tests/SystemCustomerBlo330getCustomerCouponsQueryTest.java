@@ -1,11 +1,12 @@
 package com.raviv.coupons.system.tests;
 
 import com.raviv.coupons.blo.CustomerBlo;
+import com.raviv.coupons.blo.DynamicQueryParameters;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemCustomerBlo310BuyCouponTest {
+public class SystemCustomerBlo330getCustomerCouponsQueryTest {
 
 	public static void main(String[] args) throws ApplicationException {
 		/**
@@ -20,9 +21,17 @@ public class SystemCustomerBlo310BuyCouponTest {
 		}
 
 		/**
-		 * Buy coupon
+		 * Get customer coupons with dynamicQueryParameters
 		 */
-		customerBlo.buyCoupon(3);
+		
+		DynamicQueryParameters dynamicQueryParameters = new DynamicQueryParameters();
+
+		dynamicQueryParameters.add(DynamicQueryParameters.COUPON_TYPE_ID	, "1"			);
+		dynamicQueryParameters.add(DynamicQueryParameters.FROM_PRICE		, "85"			);
+		dynamicQueryParameters.add(DynamicQueryParameters.TO_PRICE			, "95"			);
+
+		
+		customerBlo.getCustomerCouponsQuery(dynamicQueryParameters);
 
 	}
 

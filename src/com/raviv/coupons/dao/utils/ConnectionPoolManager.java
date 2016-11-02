@@ -10,6 +10,9 @@ import java.util.List;
 
 public class ConnectionPoolManager {
 
+	
+	static Object mutex = new Object();
+	
 	//private static JdbcConnectionPoolManager jdbcConnectionPoolManager = new JdbcConnectionPoolManager();
 	private static List<Connection> connectionsPool = new LinkedList <Connection>();
 
@@ -32,32 +35,37 @@ public class ConnectionPoolManager {
 		return singleToneinstance;
 	}
 		
-	public  	synchronized Connection  	getConnection() throws SQLException{
-		Connection connection;        
-		if ( connectionsPool.isEmpty() )
+	
+	public	Connection	getConnection() throws SQLException{
+		Connection connection;
+		
+		synchronized (mutex)
 		{
-			//  connectionsPool is empty, lets create a new connection ...
-			String conUrl = "jdbc:sqlserver://localhost; databaseName=Coupons; user=sa; password=sa;";
-			connection = DriverManager.getConnection(conUrl);
-	 		return connection;
+			if ( connectionsPool.isEmpty() )
+			{
+				//  connectionsPool is empty, lets create a new connection ...
+				String conUrl = "jdbc:sqlserver://localhost; databaseName=Coupons; user=sa; password=sa;";
+				connection = DriverManager.getConnection(conUrl);
+		 		return connection;
+			}
 		}
-		else
-		{
-			//  connectionsPool is not empty, lets take one and use it ...
-			connection = connectionsPool.get(0);
-			connectionsPool.remove(0);
-			return connection;
-		}
+		
+		//  connectionsPool is not empty, lets take one and use it ...
+		connection = connectionsPool.get(0);
+		connectionsPool.remove(0);
+		return connection;
+
+			
 	} // end getConnection
 
-	public   	synchronized void  			returnConnection(Connection connection) {	
+	public	void	returnConnection(Connection connection) {	
 		if ( connection != null )
 		{
 			connectionsPool.add(connection);
 		}
 	} // end returnConnection
 
-	public   	synchronized void  			closeAllConnections() throws SQLException {	
+	public	void	closeAllConnections() throws SQLException {	
 		
 		for (Connection con : connectionsPool)
 		{

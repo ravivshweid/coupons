@@ -12,7 +12,7 @@ public class Customer extends InfraBean {
 	private	int                      	userId;
 	private	String                   	customerName;
 	
-	private List<Coupon>				coupons;
+	private List<CustomerCoupon>		customerCoupons;
 	
 	public Customer() {
 		super();
@@ -24,12 +24,12 @@ public class Customer extends InfraBean {
 		setCustomerName( customerName );
 	}
 
-	public List<Coupon> getCoupons() {
-		return coupons;
+	public List<CustomerCoupon> getCustomerCoupons() {
+		return this.customerCoupons;
 	}
 
-	public void setCoupons(List<Coupon> coupons) {
-		this.coupons = coupons;
+	public void setCustomerCoupons( List<CustomerCoupon> customerCoupons) {
+		this.customerCoupons = customerCoupons;
 	}
 
 	@Override

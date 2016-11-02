@@ -24,7 +24,7 @@ public class CustomerCouponDao extends InfraDao implements ICustomerCouponDao {
 	/**
 	 * Default constructor
 	 */
-	public 					CustomerCouponDao() 
+	public 						CustomerCouponDao() 
 	{
 		super();
 	}
@@ -32,12 +32,12 @@ public class CustomerCouponDao extends InfraDao implements ICustomerCouponDao {
 	/**
 	 * Constructor with transaction manager
 	 */
-	public 					CustomerCouponDao(JdbcTransactionManager jdbcTransactionManager) {
+	public 						CustomerCouponDao(JdbcTransactionManager jdbcTransactionManager) {
 		super(jdbcTransactionManager);
 	}
 
 	@Override
-	public void 			createCustomerCoupon(CustomerCoupon customerCoupon) throws ApplicationException {
+	public void 				createCustomerCoupon(CustomerCoupon customerCoupon) throws ApplicationException {
 	
 		PreparedStatement 	preparedStatement	= null;
 		Connection 			connection 			= null;
@@ -106,7 +106,7 @@ public class CustomerCouponDao extends InfraDao implements ICustomerCouponDao {
 	}
 	
 	@Override
-	public CustomerCoupon 	getCustomerCoupon(long customerId, long couponId) throws ApplicationException 
+	public CustomerCoupon 		getCustomerCoupon(long customerId, long couponId) throws ApplicationException 
 	{
 		Connection 			connection 			= null;
 		PreparedStatement 	preparedStatement 	= null;		
@@ -153,7 +153,7 @@ public class CustomerCouponDao extends InfraDao implements ICustomerCouponDao {
 			sql += "\n 		INNER JOIN ";
 			sql += "\n 		COUPONS			C	ON CC.COUPON_ID = C.COUPON_ID";
 			sql += "\n WHERE ";
-			sql += "\n CC.CUSTOMER_ID = ? AND CC.COUPON_ID = ?";
+			sql += "\n 		CC.CUSTOMER_ID = ? AND CC.COUPON_ID = ?";
 			
 			//System.out.println(sql);
 			
@@ -193,101 +193,60 @@ public class CustomerCouponDao extends InfraDao implements ICustomerCouponDao {
 		return returnObj;
 }
 
-	@Override
-	public void 			updateCustomerCoupon(CustomerCoupon coupon) throws ApplicationException 
+	public List<CustomerCoupon>	getCustomerCouponsByCustomerId(long customerId) throws ApplicationException 
 	{
-		PreparedStatement 	preparedStatement	= null;
-		Connection 			connection 			= null;
-
-		try 
-		{
-			// Getting a connection from the connections manager or Transaction manager
-			connection = super.getConnection();
-
-			// Creating a statement object which holds the SQL we're about to execute
-			String sql;
-			
-			sql = "UPDATE COUPONS SET ";
-			sql += "	 SYS_UPDATE_DATE           = ?";
-			sql += "	,UPDATED_BY_USER_ID        = ? ";
-			sql += "	,COMPANY_ID                = ? ";
-			sql += "	,COUPON_TITLE              = ? ";
-			sql += "	,COUPON_START_DATE         = ? ";
-			sql += "	,COUPON_END_DATE           = ? ";
-			sql += "	,COUPONS_IN_STOCK          = ? ";
-			sql += "	,COUPON_TYPE_ID            = ? ";
-			sql += "	,COUPON_MESSAGE            = ? ";
-			sql += "	,COUPON_PRICE              = ? ";
-			sql += "	,IMAGE_FILE_NAME           = ? ";
-			sql += "WHERE";
-			sql += "      	COUPON_ID = ? ";
-			
-			preparedStatement = connection.prepareStatement(sql);
-
-			// Replacing question marks with the values inside  the bean.
-			preparedStatement.setTimestamp	(1 ,	new Timestamp ( System.currentTimeMillis() ) );
-			preparedStatement.setInt		(2 ,	coupon.getUpdatedByUserId() );
-			//preparedStatement.setLong		(3 ,	coupon.getCompanyId() );
-			//preparedStatement.setString		(4 ,	coupon.getCouponTitle() );
-			//preparedStatement.setTimestamp	(5 ,	new Timestamp ( coupon.getCouponStartDate() ) );
-			//preparedStatement.setTimestamp	(6 ,	new Timestamp ( coupon.getCouponEndDate() ) );
-			//preparedStatement.setInt		(7 ,	coupon.getCouponsInStock() );
-			//preparedStatement.setInt		(8 ,	coupon.getCouponTypeId() );
-			//preparedStatement.setString		(9 ,	coupon.getCouponMessage() );
-			//preparedStatement.setDouble		(10,	coupon.getCouponPrice() );
-			//preparedStatement.setString		(11,	coupon.getImageFileName() );
-			preparedStatement.setLong		(12,	coupon.getCouponId() );
-
-			// executeUpdate is a method used in order to : insert, delete, update (not get)
-			preparedStatement.executeUpdate();	        
-	        
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create coupon due to :" + e.getMessage() );
-		} 
-		finally 
-		{
-			if ( super.isJdbcTransactionManagerInUse() )
-			{
-				// Transaction manager will close the connection later.
-				super.connectionPoolManager.closeResources(preparedStatement);
-			}
-			else
-			{
-				// We do not have transaction manager.
-				super.connectionPoolManager.closeResources(connection, preparedStatement);
-			}	
-		}
-		
-	}
-
-	@Override
-	public void 			deleteCustomerCoupon(long internalId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public List<Coupon> 	getCouponsByCompanyId(long companyId) throws ApplicationException {
-		//TODO getCustomerCouponsByCustomerId
 		Connection 			connection 			= null;
 		PreparedStatement 	preparedStatement 	= null;		
 		ResultSet 			resultSet 			= null;
-		List<Coupon>		coupons				= new ArrayList<Coupon>();
-		Coupon 				coupon;
+		List<CustomerCoupon>customerCoupons		= new ArrayList<CustomerCoupon>();
+		CustomerCoupon 		customerCoupon 		;
 
-	// getting the specific entry by the input id
-	// storing it into resultSet
+		// getting the specific entry by the input id
+		// storing it into resultSet
 		try 
 		{
 			// Getting a connection from the connections manager or Transaction manager
 			connection = super.getConnection();
 			
-			String sql = "SELECT * FROM COUPONS WHERE COMPANY_ID = ?";
+			String sql;
+			
+			sql = "";
+			sql += "\n SELECT ";
+			
+			sql += "\n	 CC.INTERNAL_ID			AS CC_INTERNAL_ID";
+			sql += "\n	,CC.CUSTOMER_ID			AS CC_CUSTOMER_ID";
+			sql += "\n	,CC.COUPON_ID			AS CC_COUPON_ID";
+			sql += "\n	,CC.SYS_CREATION_DATE	AS CC_SYS_CREATION_DATE";
+			sql += "\n	,CC.SYS_UPDATE_DATE		AS CC_SYS_UPDATE_DATE";
+			sql += "\n	,CC.CREATED_BY_USER_ID	AS CC_CREATED_BY_USER_ID";
+			sql += "\n	,CC.UPDATED_BY_USER_ID	AS CC_UPDATED_BY_USER_ID";
+			
+			sql += "\n	,C.COUPON_ID			AS C_COUPON_ID";
+			sql += "\n	,C.SYS_CREATION_DATE	AS C_SYS_CREATION_DATE";
+			sql += "\n	,C.SYS_UPDATE_DATE		AS C_SYS_UPDATE_DATE";
+			sql += "\n	,C.CREATED_BY_USER_ID	AS C_CREATED_BY_USER_ID";
+			sql += "\n	,C.UPDATED_BY_USER_ID	AS C_UPDATED_BY_USER_ID";
+			sql += "\n	,C.COMPANY_ID			AS C_COMPANY_ID";
+			sql += "\n	,C.COUPON_TITLE			AS C_COUPON_TITLE";
+			sql += "\n	,C.COUPON_START_DATE	AS C_COUPON_START_DATE";
+			sql += "\n	,C.COUPON_END_DATE		AS C_COUPON_END_DATE";
+			sql += "\n	,C.COUPONS_IN_STOCK		AS C_COUPONS_IN_STOCK";
+			sql += "\n	,C.COUPON_TYPE_ID		AS C_COUPON_TYPE_ID";
+			sql += "\n	,C.COUPON_MESSAGE		AS C_COUPON_MESSAGE";
+			sql += "\n	,C.COUPON_PRICE			AS C_COUPON_PRICE";
+			sql += "\n	,C.IMAGE_FILE_NAME		AS C_IMAGE_FILE_NAME";
+			
+			sql += "\n FROM ";
+			sql += "\n 		CUSTOMER_COUPON	CC";
+			sql += "\n 		INNER JOIN ";
+			sql += "\n 		COUPONS			C	ON CC.COUPON_ID = C.COUPON_ID";
+			sql += "\n WHERE ";
+			sql += "\n 		CC.CUSTOMER_ID = ?";
+			
+			//System.out.println(sql);
 			
 			preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setLong(1, companyId);
+			preparedStatement.setLong(1, customerId );
 			
 			// execute query
 			resultSet = preparedStatement.executeQuery();
@@ -296,21 +255,20 @@ public class CustomerCouponDao extends InfraDao implements ICustomerCouponDao {
 			// For each company create bean and add it to output list
 			while ( resultSet.next() ) 
 			{
-				coupon = new Coupon();
+				customerCoupon = new CustomerCoupon();
 				//extract bean from result Set
-				//this.copyDataFromResultSetToBean (coupon, resultSet);
-				coupons.add(coupon);
-			} 
-						
+				this.copyDataFromResultSetToBean (customerCoupon, resultSet);
+				customerCoupons.add(customerCoupon);
+			}
 			
 		} 
 		catch (SQLException e) 
 		{
-			//e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get coupons by companyId : " + companyId + ". " + e.getMessage());
+			e.printStackTrace();
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get customer coupons with customerId : " + customerId + "\n" + e.getMessage());
 		} 
 		finally 
-		{
+		{			
 			if ( super.isJdbcTransactionManagerInUse() )
 			{
 				// Transaction manager will close the connection later.
@@ -320,12 +278,172 @@ public class CustomerCouponDao extends InfraDao implements ICustomerCouponDao {
 			{
 				// We do not have transaction manager.
 				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
-			}				
+			}	
 		}
 		
-		return coupons;
+		return customerCoupons;
+}
+
+	public List<CustomerCoupon>	getCustomerCouponsByCustomerIdAndDynamicFilter(long customerId, DynamicQueryParameters dynamicQueryParameters) throws ApplicationException 
+	{
+		Connection 			connection 			= null;
+		PreparedStatement 	preparedStatement 	= null;		
+		ResultSet 			resultSet 			= null;
+		List<CustomerCoupon>customerCoupons		= new ArrayList<CustomerCoupon>();
+		CustomerCoupon 		customerCoupon 		;
+
+		// getting the specific entry by the input id
+		// storing it into resultSet
+		try 
+		{
+			// Getting a connection from the connections manager or Transaction manager
+			connection = super.getConnection();
+			
+			String sql;
+			
+			sql = "";
+			sql += "\n SELECT ";
+			
+			sql += "\n	 CC.INTERNAL_ID			AS CC_INTERNAL_ID";
+			sql += "\n	,CC.CUSTOMER_ID			AS CC_CUSTOMER_ID";
+			sql += "\n	,CC.COUPON_ID			AS CC_COUPON_ID";
+			sql += "\n	,CC.SYS_CREATION_DATE	AS CC_SYS_CREATION_DATE";
+			sql += "\n	,CC.SYS_UPDATE_DATE		AS CC_SYS_UPDATE_DATE";
+			sql += "\n	,CC.CREATED_BY_USER_ID	AS CC_CREATED_BY_USER_ID";
+			sql += "\n	,CC.UPDATED_BY_USER_ID	AS CC_UPDATED_BY_USER_ID";
+			
+			sql += "\n	,C.COUPON_ID			AS C_COUPON_ID";
+			sql += "\n	,C.SYS_CREATION_DATE	AS C_SYS_CREATION_DATE";
+			sql += "\n	,C.SYS_UPDATE_DATE		AS C_SYS_UPDATE_DATE";
+			sql += "\n	,C.CREATED_BY_USER_ID	AS C_CREATED_BY_USER_ID";
+			sql += "\n	,C.UPDATED_BY_USER_ID	AS C_UPDATED_BY_USER_ID";
+			sql += "\n	,C.COMPANY_ID			AS C_COMPANY_ID";
+			sql += "\n	,C.COUPON_TITLE			AS C_COUPON_TITLE";
+			sql += "\n	,C.COUPON_START_DATE	AS C_COUPON_START_DATE";
+			sql += "\n	,C.COUPON_END_DATE		AS C_COUPON_END_DATE";
+			sql += "\n	,C.COUPONS_IN_STOCK		AS C_COUPONS_IN_STOCK";
+			sql += "\n	,C.COUPON_TYPE_ID		AS C_COUPON_TYPE_ID";
+			sql += "\n	,C.COUPON_MESSAGE		AS C_COUPON_MESSAGE";
+			sql += "\n	,C.COUPON_PRICE			AS C_COUPON_PRICE";
+			sql += "\n	,C.IMAGE_FILE_NAME		AS C_IMAGE_FILE_NAME";
+			
+			sql += "\n FROM ";
+			sql += "\n 		CUSTOMER_COUPON	CC";
+			sql += "\n 		INNER JOIN ";
+			sql += "\n 		COUPONS			C	ON CC.COUPON_ID = C.COUPON_ID";
+			sql += "\n WHERE ";
+			sql += "\n 		CC.CUSTOMER_ID = ?";
+			
+			// Build dynamic where clause
+			for ( Map.Entry<String, String> entry:  dynamicQueryParameters.getQueryParameters().entrySet() )
+			{
+				String paramName  = entry.getKey();
+				String paramValue = entry.getValue();
+				if ( paramName  == null) continue;
+				if ( paramValue == null) continue;
+				System.out.println("parameter name is " + paramName + " Paramter value is " + paramValue );
+				
+				if ( DynamicQueryParameters.COUPON_TYPE_ID.equals(paramName) )
+				{
+					sql += "\n		AND	C.COUPON_TYPE_ID = ? ";
+					continue;
+				}
+				if ( DynamicQueryParameters.FROM_PRICE.equals(paramName) )
+				{
+					sql += "\n		AND	C.COUPON_PRICE >= ? ";
+					continue;
+				}
+				if ( DynamicQueryParameters.TO_PRICE.equals(paramName) )
+				{
+					sql += "\n		AND	C.COUPON_PRICE <= ? ";
+					continue;
+				}
+			}
+			//System.out.println(sql);
+			
+			preparedStatement = connection.prepareStatement(sql);
+
+			int i = 1;			
+			preparedStatement.setLong( i , customerId );
+			i++;	
+			// Set dynamic where clause parameters
+			for ( Map.Entry<String, String> entry:  dynamicQueryParameters.getQueryParameters().entrySet() )
+			{
+				String paramName  = entry.getKey();
+				String paramValue = entry.getValue();
+				if ( paramName  == null) continue;
+				if ( paramValue == null) continue;
+				//System.out.println("parameter name is " + paramName + " Paramter value is " + paramValue );
+				
+				if ( DynamicQueryParameters.COUPON_TYPE_ID.equals(paramName) )
+				{
+					Integer couponTypeId = Integer.parseInt(paramValue);
+					preparedStatement.setInt( i , couponTypeId );
+					i++;
+					//sql += " AND    COUPON_TYPE_ID = ? ";
+					continue;
+				}
+				if ( DynamicQueryParameters.FROM_PRICE.equals(paramName) )
+				{
+					Double fromPrice = Double.parseDouble(paramValue);
+					preparedStatement.setDouble( i , fromPrice );
+					i++;
+					//sql += " AND  	COUPON_PRICE >= ? ";
+					continue;
+				}
+				if ( DynamicQueryParameters.TO_PRICE.equals(paramName) )
+				{
+					Double toPrice = Double.parseDouble(paramValue);
+					preparedStatement.setDouble( i , toPrice );
+					i++;
+					//sql += " AND  	COUPON_PRICE <= ? ";
+					continue;
+				}
+			}
+			
+			// execute query
+			resultSet = preparedStatement.executeQuery();
+	
+			// Loop through result set
+			// For each company create bean and add it to output list
+			while ( resultSet.next() ) 
+			{
+				customerCoupon = new CustomerCoupon();
+				//extract bean from result Set
+				this.copyDataFromResultSetToBean (customerCoupon, resultSet);
+				customerCoupons.add(customerCoupon);
+			}
+			
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get customer coupons with customerId : " + customerId + "\n" + e.getMessage());
+		} 
+		finally 
+		{			
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				super.connectionPoolManager.closeResources(preparedStatement, resultSet);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				super.connectionPoolManager.closeResources(connection, preparedStatement, resultSet);
+			}	
+		}
+		
+		return customerCoupons;
+}
+
+	@Override
+	public void 				deleteCustomerCoupon(long internalId) {
+		// TODO Auto-generated method stub
+		
 	}
 
+	
 	public List<Coupon> 	getCouponsByCompanyIdAndDynamicFilter(long companyId, DynamicQueryParameters dynamicQueryParameters) throws ApplicationException {
 		Connection 			connection 			= null;
 		PreparedStatement 	preparedStatement 	= null;		

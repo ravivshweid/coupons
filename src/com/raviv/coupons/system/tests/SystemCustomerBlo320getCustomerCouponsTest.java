@@ -5,7 +5,7 @@ import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemCustomerBlo310BuyCouponTest {
+public class SystemCustomerBlo320getCustomerCouponsTest {
 
 	public static void main(String[] args) throws ApplicationException {
 		/**
@@ -20,9 +20,9 @@ public class SystemCustomerBlo310BuyCouponTest {
 		}
 
 		/**
-		 * Buy coupon
+		 * Get customer coupons
 		 */
-		customerBlo.buyCoupon(3);
+		customerBlo.getCustomerCoupons();
 
 	}
 

@@ -41,7 +41,8 @@ public class CustomerCoupon extends InfraBean
 	@Override
 	public String toString() {
 		return super.toString() + "CustomerCoupon\t[internalId=" + internalId + ", customerId=" + customerId + ", couponId=" + couponId
-				+ "]\n";		
+				+ "]\n" 
+				+ this.coupon.toString();		
 	}
 
 	
