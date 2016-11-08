@@ -78,7 +78,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		catch (SQLException e) 
 		{
 			//e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create company due to :" + e.getMessage() );
+			throw new ApplicationException(ErrorType.DAO_CREATE_ERROR, e, "Failed to create company due to :" + e.getMessage() );
 		} 
 		finally 
 		{
@@ -126,7 +126,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get company with id : " + companyId + " " + e.getMessage());
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get company with id : " + companyId + " " + e.getMessage());
 		} 
 		finally 
 		{
@@ -176,7 +176,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get company with userId : " + userId + " " + e.getMessage());
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get company with userId : " + userId + " " + e.getMessage());
 		} 
 		finally 
 		{
@@ -231,7 +231,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get all companys" + e.getMessage());
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get all companys" + e.getMessage());
 		} 
 		finally 
 		{
@@ -290,7 +290,7 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 		catch (SQLException e) 
 		{
 			//e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to update company due to :" + e.getMessage() );
+			throw new ApplicationException(ErrorType.DAO_UPDATE_ERROR, e, "Failed to update company due to :" + e.getMessage() );
 		} 
 		finally 
 		{				
@@ -309,9 +309,52 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 	}
 
 	@Override
-	public void 			deleteCompany(long companyId) {
-		// TODO Auto-generated method stub
-		
+	public void 			deleteCompany(long companyId) throws ApplicationException 
+	{
+		PreparedStatement 	preparedStatement	= null;
+		Connection 			connection 			= null;
+
+		try 
+		{
+			// Getting a connection from the connections manager or Transaction manager
+			connection = super.getConnection();
+
+			// Creating a statement object which holds the SQL we're about to execute
+			String sql;
+			
+			sql = "  DELETE FROM COMPANYS ";
+			sql += " WHERE";
+			sql += "      	COMPANY_ID = ? ";
+			
+			preparedStatement = connection.prepareStatement(sql);
+
+			// Replacing question mark with the input
+			preparedStatement.setLong ( 1 ,	companyId );
+			
+
+			// executeUpdate is a method used in order to : insert, delete, update (not get)
+			preparedStatement.executeUpdate();
+	        
+		} 
+		catch (SQLException e) 
+		{
+			//e.printStackTrace();
+			throw new ApplicationException(ErrorType.DAO_DELETE_ERROR, e, "Failed to delete company due to :" + e.getMessage() );
+		} 
+		finally 
+		{				
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				this.connectionPoolManager.closeResources(preparedStatement);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				this.connectionPoolManager.closeResources(connection, preparedStatement);
+			}		
+		}
+				
 	}
 
 	private void 			copyDataFromResultSetToBean (Company company, ResultSet resultSet) throws SQLException

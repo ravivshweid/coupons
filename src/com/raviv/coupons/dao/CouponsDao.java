@@ -28,7 +28,6 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 		super();
 	}
 	
-	
 	public 					CouponsDao(JdbcTransactionManager jdbcTransactionManager) {
 		super(jdbcTransactionManager);
 	}
@@ -97,7 +96,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 		catch (SQLException e) 
 		{
 			//e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create coupon due to :" + e.getMessage() );
+			throw new ApplicationException(ErrorType.DAO_CREATE_ERROR, e, "Failed to create coupon due to :" + e.getMessage() );
 		} 
 		finally 
 		{
@@ -151,7 +150,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get coupon with id : " + couponId + " " + e.getMessage());
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get coupon with id : " + couponId + " " + e.getMessage());
 		} 
 		finally 
 		{			
@@ -222,7 +221,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to create coupon due to :" + e.getMessage() );
+			throw new ApplicationException(ErrorType.DAO_UPDATE_ERROR, e, "Failed to update coupon due to :" + e.getMessage() );
 		} 
 		finally 
 		{
@@ -241,8 +240,50 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 	}
 
 	@Override
-	public void 			deleteCoupon(long coupon) {
-		// TODO Auto-generated method stub
+	public void 			deleteCoupon(long couponId) throws ApplicationException 
+	{
+		PreparedStatement 	preparedStatement	= null;
+		Connection 			connection 			= null;
+
+		try 
+		{
+			// Getting a connection from the connections manager or Transaction manager
+			connection = super.getConnection();
+
+			// Creating a statement object which holds the SQL we're about to execute
+			String sql;
+			
+			sql = "  DELETE FROM COUPONS ";
+			sql += " WHERE";
+			sql += "      	COUPON_ID = ? ";
+			
+			preparedStatement = connection.prepareStatement(sql);
+
+			// Replacing question marks with the values inside  the bean.
+			preparedStatement.setLong		( 1,	couponId );
+
+			// executeUpdate is a method used in order to : insert, delete, update (not get)
+			preparedStatement.executeUpdate();	        
+	        
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			throw new ApplicationException(ErrorType.DAO_DELETE_ERROR, e, "Failed to delete coupon due to :" + e.getMessage() );
+		} 
+		finally 
+		{
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				super.connectionPoolManager.closeResources(preparedStatement);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				super.connectionPoolManager.closeResources(connection, preparedStatement);
+			}	
+		}
 		
 	}
 
@@ -283,7 +324,7 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 		catch (SQLException e) 
 		{
 			//e.printStackTrace();
-			throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to get coupons by companyId : " + companyId + ". " + e.getMessage());
+			throw new ApplicationException(ErrorType.DAO_GET_ERROR, e, "Failed to get coupons by companyId : " + companyId + ". " + e.getMessage());
 		} 
 		finally 
 		{

@@ -16,29 +16,31 @@ public class ConnectionPoolManager {
 	//private static JdbcConnectionPoolManager jdbcConnectionPoolManager = new JdbcConnectionPoolManager();
 	private static List<Connection> connectionsPool = new LinkedList <Connection>();
 
-	private static ConnectionPoolManager singleToneinstance;
+	private static ConnectionPoolManager singleToneInstance;
 	
-	static 	{ singleToneinstance = new ConnectionPoolManager(); }
+	static 	{ singleToneInstance = new ConnectionPoolManager(); }
 
 	/**
-	 * private contractor, single tone class
+	 * Hide,
+	 * private constractor, single tone class
 	 */
 	private ConnectionPoolManager(){}
 
 	/**
-	 * returns an instance of the ConnectionPoolManager
+	 * returns an instance of the ConnectionPoolManager - this is singleton design
 	 * 
 	 * @throws Exception
 	 * @return an instance for the ConnectionPool singleton
 	 * */
 	public static ConnectionPoolManager 	getInstance()  {
-		return singleToneinstance;
+		return singleToneInstance;
 	}
 		
 	
 	public	Connection	getConnection() throws SQLException{
 		Connection connection;
 		
+		// now we do not want 2 Threads to get same connection ...
 		synchronized (mutex)
 		{
 			if ( connectionsPool.isEmpty() )
@@ -48,11 +50,13 @@ public class ConnectionPoolManager {
 				connection = DriverManager.getConnection(conUrl);
 		 		return connection;
 			}
-		}
 		
-		//  connectionsPool is not empty, lets take one and use it ...
-		connection = connectionsPool.get(0);
-		connectionsPool.remove(0);
+		
+			//  connectionsPool is not empty, lets take one and use it ...
+			connection = connectionsPool.get(0);
+			connectionsPool.remove(0);
+		} // end of synchronized
+		
 		return connection;
 
 			
