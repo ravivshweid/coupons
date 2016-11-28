@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 import com.raviv.coupons.beans.User;
 import com.raviv.coupons.dao.interfaces.IUsersDao;
 import com.raviv.coupons.dao.utils.JdbcTransactionManager;
-import com.raviv.coupons.dao.utils.JdbcUtils;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 
@@ -278,7 +277,8 @@ public class UsersDao extends InfraDao implements IUsersDao {
 		// put it into result set
 		try 
 		{
-			connection = JdbcUtils.getConnection();
+			connection = super.getConnection();
+			
 			String sql = "SELECT * FROM USERS WHERE LOGIN_NAME = ? AND LOGIN_PASSWORD = ? AND USER_PROFILE_ID = ?";
 			
 			preparedStatement = connection.prepareStatement(sql);

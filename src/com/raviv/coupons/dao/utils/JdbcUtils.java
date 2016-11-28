@@ -1,11 +1,16 @@
 package com.raviv.coupons.dao.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+//import java.sql.Connection;
+//import java.sql.DriverManager;
+//import java.sql.PreparedStatement;
+//import java.sql.ResultSet;
+//import java.sql.SQLException;
 
+/**
+ * Example given for reference. not in use
+ * @author raviv
+ *
+ */
 public class JdbcUtils {
 
 /*
@@ -20,7 +25,8 @@ public class JdbcUtils {
 	}
 */
 
-	public static Connection getConnection() throws SQLException{
+	/*
+	private static Connection getConnection() throws SQLException{
 		
 		Connection connection;
 		
@@ -35,7 +41,11 @@ public class JdbcUtils {
 		
  		return connection;
 	}
+*/
 
+	/*
+	
+	
 	public static void closeConnection(Connection connection)
 	{
 		try 
@@ -52,6 +62,9 @@ public class JdbcUtils {
 			// Write to log that we have a resource leak
 		}
 	}
+*/
+
+	/*
 	
 	public static void closePreparedStatement(PreparedStatement preparedStatement)
 	{	
@@ -68,6 +81,9 @@ public class JdbcUtils {
 			e.printStackTrace();
 		}
 	}
+*/
+
+	/*
 
 	public static void closeResultSet( ResultSet resultSet) 
 	{
@@ -85,6 +101,7 @@ public class JdbcUtils {
 		}
 
 	}
+*/
 
 	
 	/*

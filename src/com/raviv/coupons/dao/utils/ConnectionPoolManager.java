@@ -11,7 +11,7 @@ import java.util.List;
 public class ConnectionPoolManager {
 
 	
-	static Object mutex = new Object();
+	private static Object mutex = new Object();
 	
 	//private static JdbcConnectionPoolManager jdbcConnectionPoolManager = new JdbcConnectionPoolManager();
 	private static List<Connection> connectionsPool = new LinkedList <Connection>();
@@ -22,12 +22,12 @@ public class ConnectionPoolManager {
 
 	/**
 	 * Hide,
-	 * private constractor, single tone class
+	 * private constructor, single tone class
 	 */
 	private ConnectionPoolManager(){}
 
 	/**
-	 * returns an instance of the ConnectionPoolManager - this is singleton design
+	 * returns an instance of the ConnectionPoolManager - this is singleton design pattern
 	 * 
 	 * @throws Exception
 	 * @return an instance for the ConnectionPool singleton
@@ -55,7 +55,7 @@ public class ConnectionPoolManager {
 			//  connectionsPool is not empty, lets take one and use it ...
 			connection = connectionsPool.get(0);
 			connectionsPool.remove(0);
-		} // end of synchronized
+		} // end of synchronised
 		
 		return connection;
 
