@@ -5,7 +5,7 @@ import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemAdminBlo050getCompanyTest {
+public class SystemAdminBlo020deleteCompanyTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
@@ -24,7 +24,8 @@ public class SystemAdminBlo050getCompanyTest {
 			throw new ApplicationException(ErrorType.LOGIN_ERROR, e , "Login failed" );
 		}
 		
-		adminBlo.getCompany(2);
+		
+		adminBlo.deleteCompany(1);
 
 	}
 

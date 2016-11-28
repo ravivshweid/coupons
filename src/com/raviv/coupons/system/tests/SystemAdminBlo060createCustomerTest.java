@@ -25,12 +25,11 @@ public class SystemAdminBlo060createCustomerTest {
 			throw new ApplicationException(ErrorType.LOGIN_ERROR, e , "Login failed" );
 		}
 		
-		
 		/**
 		 *  Create the customer
 		 */
-		User 		user 		= new User		( "Raviv Shweid" , "cust4" , "1234" );
-		Customer	customer	= new Customer 	( "CUSTOMER 4");
+		User 		user 		= new User		( "Raviv Shweid" , "cust5" , "1234" );
+		Customer	customer	= new Customer 	( "CUSTOMER 5");
 		
 		adminBlo.createCustomer ( user, customer );
 

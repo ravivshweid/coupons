@@ -21,6 +21,23 @@ public class Company extends InfraBean {
 		super();
 	}
 
+	public Company(String companyName, String companyEmail) 
+	{
+		super();
+		this.companyName	= companyName;
+		this.companyEmail 	= companyEmail;
+	}
+
+
+
+	public Company(long companyId, String companyName, String companyEmail) 
+	{
+		super();
+		this.companyId 		= companyId;
+		this.companyName 	= companyName;
+		this.companyEmail	= companyEmail;
+	}
+
 	public List<Coupon> getCoupons() {
 		return coupons;
 	}

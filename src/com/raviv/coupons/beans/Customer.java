@@ -14,9 +14,16 @@ public class Customer extends InfraBean {
 	
 	private List<CustomerCoupon>		customerCoupons;
 	
-	public Customer() {
+	public Customer() 
+	{
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public Customer(long customerId, String customerName) 
+	{
+		super();
+		this.customerId = customerId;
+		this.customerName = customerName;
 	}
 
 	public Customer(String customerName) {

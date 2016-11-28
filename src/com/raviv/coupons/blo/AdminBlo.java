@@ -1,7 +1,6 @@
 package com.raviv.coupons.blo;
 
 import java.util.List;
-
 import com.raviv.coupons.beans.Company;
 import com.raviv.coupons.beans.Customer;
 import com.raviv.coupons.beans.User;
@@ -271,6 +270,55 @@ public class AdminBlo implements IClientBlo {
 		return company;
 	}
 
+	public  void 			deleteCompany(long companyId) throws ApplicationException 
+	{		
+		verifyLoggedUser();
+
+		// =====================================================
+		// Start transaction by creating JdbcTransactionManager
+		// =====================================================		
+		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
+
+		// Inject transaction manager to DAO via constructor
+		ICompanysDao companysDao	= new CompanysDao( jdbcTransactionManager );
+		
+		try
+		{
+			// =====================================================
+			// Delete company, related coupons and related customer coupons
+			// COUPONS         has FK to COMPANYS using company id, with delete Cascade
+			// CUSTOMER_COUPON has FK to COUPONS  using company id, with delete Cascade
+			// =====================================================			
+			
+			companysDao.deleteCompany(companyId);
+			
+			// =====================================================
+			// Commit transaction
+			// =====================================================
+
+			jdbcTransactionManager.commit();
+						
+			PrintUtils.printHeader("deleteCompany deleted companyId : " + companyId );
+			
+		}
+		catch (ApplicationException e)
+		{
+			// =====================================================
+			// Rollback transaction
+			// =====================================================
+
+			jdbcTransactionManager.rollback();
+			
+			throw (e); 
+			
+		}
+		finally
+		{
+			jdbcTransactionManager.closeConnection();
+		}	
+				
+	}
+
 	public  void 			createCustomer(User user, Customer customer) throws ApplicationException 
 	{
 		
@@ -342,21 +390,6 @@ public class AdminBlo implements IClientBlo {
 		}	
 	}// createCustomer
 
-	public  List<Customer>	getAllCustomers() throws ApplicationException 
-	{		
-		verifyLoggedUser();
-		
-		List<Customer> customersList;
-		customersList = customersDao.getAllCustomers();
-		
-		for ( Customer customer : customersList )
-		{
-			System.out.println(customer);
-		}
-		
-		return customersList;
-	}
-
 	public  Customer 		getCustomer(long customerId) throws ApplicationException 
 	{		
 		verifyLoggedUser();
@@ -374,5 +407,128 @@ public class AdminBlo implements IClientBlo {
 		return customer;
 	}
 
+	public  void 			updateCustomer(Customer inputCustomer) throws ApplicationException 
+	{
+		
+		verifyLoggedUser();
+
+		// =====================================================
+		// Start transaction by creating JdbcTransactionManager
+		// =====================================================		
+		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
+
+		// Inject transaction manager to DAO via constructors
+		ICustomersDao customersDao	= new CustomersDao( jdbcTransactionManager );
+
+		// =====================================================
+		// Get customer details from DB
+		// =====================================================
+		Customer customer;		
+		customer = customersDao.getCustomer( inputCustomer.getCustomerId() );
+		
+		try
+		{			
+			// =====================================================
+			// Update customer name
+			// =====================================================
+			
+			// Prepare inputs
+			customer.setUpdatedByUserId( this.loggedUser.getUserId() );
+			
+			customer.setCustomerName( inputCustomer.getCustomerName() );
+
+			
+			// Update the customer
+			customersDao.updateCustomer(customer);
+
+			// =====================================================
+			// Commit transaction
+			// =====================================================
+
+			jdbcTransactionManager.commit();
+			
+			PrintUtils.printHeader("updateCustomer updated customer");
+			System.out.println(customer);
+			
+		}
+		catch (ApplicationException e)
+		{
+			// =====================================================
+			// Rollback transaction
+			// =====================================================
+
+			jdbcTransactionManager.rollback();
+			
+			throw (e); 
+			
+		}
+		finally
+		{
+			jdbcTransactionManager.closeConnection();
+		}	
+	}
+
+	public  void 			deleteCustomer(long customerId) throws ApplicationException 
+	{		
+		verifyLoggedUser();
+
+		// =====================================================
+		// Start transaction by creating JdbcTransactionManager
+		// =====================================================		
+		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
+
+		// Inject transaction manager to DAO via constructor
+		ICustomersDao customersDao	= new CustomersDao( jdbcTransactionManager );
+		
+		try
+		{
+			// =====================================================
+			// Delete customer and related customer coupons
+			// CUSTOMER_COUPON has FK to CUSTOMERS using customer id, with delete Cascade
+			// =====================================================			
+			
+			customersDao.deleteCustomer(customerId);
+			
+			// =====================================================
+			// Commit transaction
+			// =====================================================
+
+			jdbcTransactionManager.commit();
+						
+			PrintUtils.printHeader("deleteCustomer deleted customerId : " + customerId );
+			
+		}
+		catch (ApplicationException e)
+		{
+			// =====================================================
+			// Rollback transaction
+			// =====================================================
+
+			jdbcTransactionManager.rollback();
+			
+			throw (e); 
+			
+		}
+		finally
+		{
+			jdbcTransactionManager.closeConnection();
+		}	
+				
+	}
+
+	public  List<Customer>	getAllCustomers() throws ApplicationException 
+	{		
+		verifyLoggedUser();
+		
+		List<Customer> customersList;
+		customersList = customersDao.getAllCustomers();
+		
+		for ( Customer customer : customersList )
+		{
+			System.out.println(customer);
+		}
+		
+		return customersList;
+	}
 
 }

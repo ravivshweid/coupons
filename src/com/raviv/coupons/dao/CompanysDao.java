@@ -322,6 +322,12 @@ public class CompanysDao extends InfraDao implements ICompanysDao {
 			// Creating a statement object which holds the SQL we're about to execute
 			String sql;
 			
+			// =====================================================
+			// Delete company, related coupons and related customer coupons
+			// COUPONS         has FK to COMPANYS using company id, with delete Cascade
+			// CUSTOMER_COUPON has FK to COUPONS  using company id, with delete Cascade
+			// =====================================================	
+			
 			sql = "  DELETE FROM COMPANYS ";
 			sql += " WHERE";
 			sql += "      	COMPANY_ID = ? ";

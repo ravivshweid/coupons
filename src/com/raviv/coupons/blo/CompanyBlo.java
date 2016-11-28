@@ -384,4 +384,54 @@ public class CompanyBlo implements IClientBlo {
 		company.setCoupons(couponsList);
 	}
 
+	public  void 			deleteCoupon(long couponId) throws ApplicationException 
+	{		
+		verifyLoggedUser();
+
+		// =====================================================
+		// Start transaction by creating JdbcTransactionManager
+		// =====================================================		
+		JdbcTransactionManager jdbcTransactionManager = new JdbcTransactionManager();
+
+		// Inject transaction manager to DAO via constructors
+		ICouponsDao couponsDao	= new CouponsDao( jdbcTransactionManager );
+		
+		try
+		{
+			// =====================================================
+			// Delete coupon and related customer coupons
+			// CUSTOMER_COUPON has FK to COUPONS using coupon id, with delete Cascade
+			// =====================================================			
+			
+			couponsDao.deleteCoupon(couponId);
+			
+			// =====================================================
+			// Commit transaction
+			// =====================================================
+
+			jdbcTransactionManager.commit();
+			
+			this.isGetCompanyCouponsFromDao = true;
+			
+			PrintUtils.printHeader("deleteCoupon deleted couponId : " + couponId );
+			
+		}
+		catch (ApplicationException e)
+		{
+			// =====================================================
+			// Rollback transaction
+			// =====================================================
+
+			jdbcTransactionManager.rollback();
+			
+			throw (e); 
+			
+		}
+		finally
+		{
+			jdbcTransactionManager.closeConnection();
+		}	
+				
+	}
+
 }

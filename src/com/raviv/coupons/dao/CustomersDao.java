@@ -231,7 +231,7 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		} 
 		catch (SQLException e) 
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new ApplicationException(ErrorType.DAO_UPDATE_ERROR, e, "Failed to update customer due to :" + e.getMessage() );
 		} 
 		finally 
@@ -261,6 +261,11 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 
 			// Creating a statement object which holds the SQL we're about to execute
 			String sql;
+			
+			// =====================================================
+			// Delete customer and related customer coupons
+			// CUSTOMER_COUPON has FK to CUSTOMERS using customer id, with delete Cascade
+			// =====================================================	
 			
 			sql = " DELETE FROM CUSTOMERS ";
 			sql += "WHERE";
@@ -362,5 +367,4 @@ public class CustomersDao extends InfraDao implements ICustomersDao {
 		customer.setCustomerName   	( resultSet.getString    ( "CUSTOMER_NAME" ) );			
 	}
 
-	
 }

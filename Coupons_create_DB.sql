@@ -124,6 +124,15 @@ if OBJECT_ID ('COMPANY') is not null
 	DROP TABLE dbo.COMPANY
 GO
 
+if OBJECT_ID ('CUSTOMER_COUPON') is not null
+	DROP TABLE dbo.CUSTOMER_COUPON
+GO
+
+if OBJECT_ID ('COUPONS') is not null
+	DROP TABLE dbo.COUPONS
+GO
+
+
 if OBJECT_ID ('COMPANYS') is not null
 	DROP TABLE dbo.COMPANYS
 GO

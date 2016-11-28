@@ -22,6 +22,10 @@ public class SystemCustomerBlo310BuyCouponTest {
 		/**
 		 * Buy coupon
 		 */
+		customerBlo.buyCoupon(1);
+
+		customerBlo.buyCoupon(2);
+
 		customerBlo.buyCoupon(3);
 
 	}

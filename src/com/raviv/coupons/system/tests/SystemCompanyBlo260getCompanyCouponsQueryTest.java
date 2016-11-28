@@ -6,7 +6,7 @@ import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemCompanyBlo250getCompanyCouponsQueryTest {
+public class SystemCompanyBlo260getCompanyCouponsQueryTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{

@@ -1,31 +1,33 @@
 package com.raviv.coupons.system.tests;
 
-import com.raviv.coupons.blo.AdminBlo;
+import com.raviv.coupons.blo.CompanyBlo;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemAdminBlo050getCompanyTest {
+public class SystemCompanyBlo210deleteCouponTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
-		
 		/**
-		 *  login as admin and get adminBlo
+		 *  login as company and get companyBlo
 		 */
 		CouponsSystem 	couponsSystem = CouponsSystem.getInstance();
-		AdminBlo 		adminBlo;
+		CompanyBlo 		companyBlo;
 		try
 		{
-			adminBlo = (AdminBlo) couponsSystem.login("admin", "1234");
+			companyBlo = 	(CompanyBlo) couponsSystem.login( "comp1" , "1234" );
 		}
 		catch (Exception e)
 		{
-			throw new ApplicationException(ErrorType.LOGIN_ERROR, e , "Login failed" );
-		}
-		
-		adminBlo.getCompany(2);
+			throw new ApplicationException(ErrorType.GENERAL_ERROR, null
+					, "Login failed" );
+		}				
+			
+		companyBlo.deleteCoupon(1);
 
+		
+		
 	}
 
 }

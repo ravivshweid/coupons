@@ -1,11 +1,12 @@
 package com.raviv.coupons.system.tests;
 
+import com.raviv.coupons.beans.Company;
 import com.raviv.coupons.blo.AdminBlo;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.exceptions.ApplicationException;
 import com.raviv.coupons.system.CouponsSystem;
 
-public class SystemAdminBlo050getCompanyTest {
+public class SystemAdminBlo030updateCompanyTest {
 
 	public static void main(String[] args) throws ApplicationException 
 	{
@@ -24,7 +25,9 @@ public class SystemAdminBlo050getCompanyTest {
 			throw new ApplicationException(ErrorType.LOGIN_ERROR, e , "Login failed" );
 		}
 		
-		adminBlo.getCompany(2);
+		Company	company	= new Company	( 4, "Company test zzz" ,"zzz@gmail.com"	);
+		
+		adminBlo.updateCompany(company);
 
 	}
 

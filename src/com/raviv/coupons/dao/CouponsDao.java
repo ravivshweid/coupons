@@ -253,6 +253,8 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 			// Creating a statement object which holds the SQL we're about to execute
 			String sql;
 			
+			// CUSTOMER_COUPON has FK to COUPONS with delete Cascade
+			
 			sql = "  DELETE FROM COUPONS ";
 			sql += " WHERE";
 			sql += "      	COUPON_ID = ? ";
@@ -511,6 +513,52 @@ public class CouponsDao extends InfraDao implements ICouponsDao {
 		coupon.setCouponMessage  	( resultSet.getString    ( "COUPON_MESSAGE" ) );
 		coupon.setCouponPrice    	( resultSet.getDouble    ( "COUPON_PRICE" ) );
 		coupon.setImageFileName  	( resultSet.getString    ( "IMAGE_FILE_NAME" ) );
+	}
+
+	public void 			deleteExpiredCoupons() throws ApplicationException 
+	{
+		PreparedStatement 	preparedStatement	= null;
+		Connection 			connection 			= null;
+
+		try 
+		{
+			// Getting a connection from the connections pool or Transaction manager
+			connection = super.getConnection();
+
+			// Creating a statement object which holds the SQL we're about to execute
+			String sql;
+			
+			// CUSTOMER_COUPON has FK to COUPONS with delete Cascade
+			
+			sql = "  DELETE FROM COUPONS ";
+			sql += " WHERE";
+			sql += "      	COUPON_END_DATE <= GETDATE()";
+			
+			preparedStatement = connection.prepareStatement(sql);
+
+			// executeUpdate is a method used in order to : insert, delete, update (not get)
+			preparedStatement.executeUpdate();	        
+	        
+		} 
+		catch (SQLException e) 
+		{
+			//e.printStackTrace();
+			throw new ApplicationException(ErrorType.DAO_DELETE_ERROR, e, "Failed to delete coupons due to :" + e.getMessage() );
+		} 
+		finally 
+		{
+			if ( super.isJdbcTransactionManagerInUse() )
+			{
+				// Transaction manager will close the connection later.
+				super.connectionPoolManager.closeResources(preparedStatement);
+			}
+			else
+			{
+				// We do not have transaction manager.
+				super.connectionPoolManager.closeResources(connection, preparedStatement);
+			}	
+		}
+		
 	}
 
 }
