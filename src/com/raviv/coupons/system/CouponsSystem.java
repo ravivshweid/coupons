@@ -6,9 +6,11 @@ import com.raviv.coupons.blo.CompanyBlo;
 import com.raviv.coupons.blo.CustomerBlo;
 import com.raviv.coupons.blo.interfaces.IClientBlo;
 import com.raviv.coupons.dao.UsersDao;
+import com.raviv.coupons.dao.utils.ConnectionPoolManager;
 import com.raviv.coupons.enums.ErrorType;
 import com.raviv.coupons.enums.UserProfileType;
 import com.raviv.coupons.exceptions.ApplicationException;
+import com.raviv.coupons.threads.DeleteExpiredCouponsScheduler;
 import com.raviv.coupons.utils.PrintUtils;
 
 public class CouponsSystem 
@@ -18,13 +20,43 @@ public class CouponsSystem
 	
 	private UsersDao usersDao;
 	
-	static { singleToneInstance = new CouponsSystem(); }
+	private static DeleteExpiredCouponsScheduler deleteExpiredCouponsScheduler;
+	
+	static 
+	{ 
+		singleToneInstance = new CouponsSystem();
+		
+		deleteExpiredCouponsScheduler = new DeleteExpiredCouponsScheduler();
+		
+		// =====================================================
+		// Start the delete expired coupons thread
+		// =====================================================
+		deleteExpiredCouponsScheduler.start();
+	}
+
+	/**
+	 * System shut down
+	 * @throws ApplicationException 
+	 * */
+	public void shutDown() throws ApplicationException
+	{
+		PrintUtils.printHeader("CouponsSystem : shutDown()" );
+		// =====================================================
+		// Shut down delete expired coupons thread
+		// =====================================================
+		deleteExpiredCouponsScheduler.shutDown();
+
+		// =====================================================
+		// Close all connection pool connections
+		// =====================================================
+		ConnectionPoolManager.getInstance().closeAllConnections();
+	}
+
 
 	/**
 	 * returns an instance of the ConnectionPoolManager
 	 * 
-	 * @throws Exception
-	 * @return an instance for the ConnectionPool singleton
+	 * @return an instance for the CouponsSystem singleton
 	 * */
 	public static CouponsSystem 	getInstance()  
 	{
@@ -38,7 +70,6 @@ public class CouponsSystem
 	{
 		usersDao = new UsersDao();
 	}
-
 	
 	public  IClientBlo login(String loginName, String loginPassword) throws ApplicationException 
 	{

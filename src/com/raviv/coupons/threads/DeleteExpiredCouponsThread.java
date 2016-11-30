@@ -13,7 +13,7 @@ import com.raviv.coupons.utils.PrintUtils;
  *
  */
 public class DeleteExpiredCouponsThread extends Thread {
-	
+		
 	@Override
 	public  void 			run()
 	{		
@@ -22,7 +22,7 @@ public class DeleteExpiredCouponsThread extends Thread {
 		// =====================================================
 		// Start transaction by creating JdbcTransactionManager
 		// =====================================================		
-		JdbcTransactionManager jdbcTransactionManager = null;;
+		JdbcTransactionManager jdbcTransactionManager = null;
 
 		try 
 		{
@@ -30,7 +30,6 @@ public class DeleteExpiredCouponsThread extends Thread {
 		} 
 		catch (ApplicationException e1) 
 		{
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 

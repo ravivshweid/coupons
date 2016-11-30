@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.raviv.coupons.enums.ErrorType;
+import com.raviv.coupons.exceptions.ApplicationException;
+import com.raviv.coupons.utils.PrintUtils;
+
 public class ConnectionPoolManager {
 
 	
@@ -69,15 +73,25 @@ public class ConnectionPoolManager {
 		}
 	} // end returnConnection
 
-	public	void	closeAllConnections() throws SQLException {	
+	public	void	closeAllConnections() throws ApplicationException  
+	{	
+		PrintUtils.printHeader("ConnectionPoolManager : closeAllConnections()" );
 		
 		for (Connection con : connectionsPool)
 		{
 			if (con != null ) 
 			{
-				if ( con.isValid(0) )
+				try 
 				{
-					con.close();
+					if ( con.isValid(0) )
+					{
+						con.close();
+					}
+				} 
+				catch (SQLException e) 
+				{
+					//e.printStackTrace();
+					throw new ApplicationException(ErrorType.GENERAL_ERROR, e, "Failed to closeAllConnections due to :" + e.getMessage() );
 				}
 			}
 		}
